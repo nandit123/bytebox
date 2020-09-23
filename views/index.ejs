@@ -1,167 +1,168 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <title>Byte Box</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.css">
-        <link rel="stylesheet" href="dist/css/bootstrap-navbar-dropdowns.css">
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.js" defer></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.js" defer></script>
-        <script src="dist/js/bootstrap-navbar-dropdowns.js" defer></script>
-    </head>
+<head>
+    <title>Byte Box</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.css">
+    <link rel="stylesheet" href="dist/css/bootstrap-navbar-dropdowns.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.js" defer></script>
+    <script src="dist/js/bootstrap-navbar-dropdowns.js" defer></script>
+</head>
 
-    <body>
+<body>
 
-        <div class="navbar navbar-expand-md navbar-dark bg-dark mb-4" role="navigation">
-            <strong><a class="navbar-brand" href="#">Byte Box</a></strong>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="http://fontenele.github.io/bootstrap-navbar-dropdowns/"
-                           target="_blank">Github</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Disabled</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="dropdown1" data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">Dropdown1</a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdown1">
-                            <li class="dropdown-item"><a href="http://www.youtube.com" target="_blank">Action 1 -
+    <div class="navbar navbar-expand-md navbar-dark bg-dark mb-4" role="navigation">
+        <strong><a class="navbar-brand" href="#">Byte Box</a></strong>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://fontenele.github.io/bootstrap-navbar-dropdowns/"
+                        target="_blank">Github</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Disabled</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown1" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">Dropdown1</a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdown1">
+                        <li class="dropdown-item"><a href="http://www.youtube.com" target="_blank">Action 1 -
                                 Youtube</a></li>
-                            <li class="dropdown-item dropdown">
-                                <a class="dropdown-toggle" id="dropdown1-1" data-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false">Dropdown1.1</a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdown1-1">
-                                    <li class="dropdown-item"><a href="#">Action 1.1</a></li>
-                                    <li class="dropdown-item dropdown">
-                                        <a class="dropdown-toggle" id="dropdown1-1-1" data-toggle="dropdown"
-                                           aria-haspopup="true" aria-expanded="false">Dropdown1.1.1</a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdown1-1-1">
-                                            <li class="dropdown-item"><a target="_blank"
-                                                                         href="http://www.google.com">Action 1.1.1 -
+                        <li class="dropdown-item dropdown">
+                            <a class="dropdown-toggle" id="dropdown1-1" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">Dropdown1.1</a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdown1-1">
+                                <li class="dropdown-item"><a href="#">Action 1.1</a></li>
+                                <li class="dropdown-item dropdown">
+                                    <a class="dropdown-toggle" id="dropdown1-1-1" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">Dropdown1.1.1</a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdown1-1-1">
+                                        <li class="dropdown-item"><a target="_blank" href="http://www.google.com">Action
+                                                1.1.1 -
                                                 Google</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="dropdown2" data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">Dropdown2</a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdown2">
-                            <li class="dropdown-item"><a href="#">Action 2 A</a></li>
-                            <li class="dropdown-item"><a href="#">Action 2 B</a></li>
-                            <li class="dropdown-item"><a href="#">Action 2 C</a></li>
-                            <li class="dropdown-item dropdown">
-                                <a class="dropdown-toggle" id="dropdown2-1" data-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false">Dropdown2.1</a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdown2-1">
-                                    <li class="dropdown-item"><a href="#">Action 2.1 A</a></li>
-                                    <li class="dropdown-item"><a href="#">Action 2.1 B</a></li>
-                                    <li class="dropdown-item"><a href="#">Action 2.1 C</a></li>
-                                    <li class="dropdown-item dropdown">
-                                        <a class="dropdown-toggle" id="dropdown2-1-1" data-toggle="dropdown"
-                                           aria-haspopup="true" aria-expanded="false">Dropdown2.1.1</a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdown2-1-1">
-                                            <li class="dropdown-item"><a href="#">Action 2.1.1 A</a></li>
-                                            <li class="dropdown-item"><a href="#">Action 2.1.1 B</a></li>
-                                            <li class="dropdown-item"><a href="#">Action 2.1.1 C</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown-item dropdown">
-                                        <a class="dropdown-toggle" id="dropdown2-1-2" data-toggle="dropdown"
-                                           aria-haspopup="true" aria-expanded="false">Dropdown2.1.2</a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdown2-1-2">
-                                            <li class="dropdown-item"><a href="#">Action 2.1.2 A</a></li>
-                                            <li class="dropdown-item"><a href="#">Action 2.1.2 B</a></li>
-                                            <li class="dropdown-item"><a href="#">Action 2.1.2 C</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <form class="form-inline mt-2 mt-md-0">
-                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
-            </div>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown2" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">Dropdown2</a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdown2">
+                        <li class="dropdown-item"><a href="#">Action 2 A</a></li>
+                        <li class="dropdown-item"><a href="#">Action 2 B</a></li>
+                        <li class="dropdown-item"><a href="#">Action 2 C</a></li>
+                        <li class="dropdown-item dropdown">
+                            <a class="dropdown-toggle" id="dropdown2-1" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">Dropdown2.1</a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdown2-1">
+                                <li class="dropdown-item"><a href="#">Action 2.1 A</a></li>
+                                <li class="dropdown-item"><a href="#">Action 2.1 B</a></li>
+                                <li class="dropdown-item"><a href="#">Action 2.1 C</a></li>
+                                <li class="dropdown-item dropdown">
+                                    <a class="dropdown-toggle" id="dropdown2-1-1" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">Dropdown2.1.1</a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdown2-1-1">
+                                        <li class="dropdown-item"><a href="#">Action 2.1.1 A</a></li>
+                                        <li class="dropdown-item"><a href="#">Action 2.1.1 B</a></li>
+                                        <li class="dropdown-item"><a href="#">Action 2.1.1 C</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-item dropdown">
+                                    <a class="dropdown-toggle" id="dropdown2-1-2" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">Dropdown2.1.2</a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdown2-1-2">
+                                        <li class="dropdown-item"><a href="#">Action 2.1.2 A</a></li>
+                                        <li class="dropdown-item"><a href="#">Action 2.1.2 B</a></li>
+                                        <li class="dropdown-item"><a href="#">Action 2.1.2 C</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
         </div>
-        <div style="margin: 15px">
-            <p style="font-size: 30px;">Transfer | <a href="">Automate</a></p>
-            <p style="margin-top: 100px; font-size: 20px;" id="sign_in_note">To Transfer your data to Filecoin Network, you need to first connect to your google account</p>
-            
-            <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
-            <button id="signout_button" style="display: none;">Sign Out</button>
+    </div>
+    <div style="margin: 15px">
+        <p style="font-size: 30px;">Transfer | <a href="">Automate</a></p>
+        <p style="margin-top: 100px; font-size: 20px;" id="sign_in_note">To Transfer your data to Filecoin Network, you
+            need to first connect to your google account</p>
 
-            <pre id="content" style="white-space: pre-wrap;"></pre>
-        </div>
+        <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
+        <button id="signout_button" style="display: none;">Sign Out</button>
 
-        <script type="text/javascript">
-            // Client ID and API key from the Developer Console
-            var CLIENT_ID = '';
-            var API_KEY = '';
-            
-            // Array of API discovery doc URLs for APIs used by the quickstart
-            var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
-      
-            // Authorization scopes required by the API; multiple scopes can be
-            // included, separated by spaces.
-            var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
-            // https://www.googleapis.com/auth/drive
-            var authorizeButton = document.getElementById('authorize_button');
-            var signoutButton = document.getElementById('signout_button');
-            var signInNote = document.getElementById('sign_in_note');
-            /**
-             *  On load, called to load the auth2 library and API client library.
-             */
-            function handleClientLoad() {
-              gapi.load('client:auth2', initClient);
-            }
-      
-            /**
-             *  Initializes the API client library and sets up sign-in state
-             *  listeners.
-             */
-            function initClient() {
-              gapi.client.init({
+        <pre id="content" style="white-space: pre-wrap;"></pre>
+    </div>
+
+    <script type="text/javascript">
+        // Client ID and API key from the Developer Console
+        var CLIENT_ID = '661879573898-06hnq7gdfe2vbtd0huk0ui7qjgs050gs.apps.googleusercontent.com';
+        var API_KEY = 'AIzaSyDxe3SDEXfrG1Wm491vyCtcC3ed_cmHGWA';
+
+        // Array of API discovery doc URLs for APIs used by the quickstart
+        var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
+
+        // Authorization scopes required by the API; multiple scopes can be
+        // included, separated by spaces.
+        var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+        // https://www.googleapis.com/auth/drive
+        var authorizeButton = document.getElementById('authorize_button');
+        var signoutButton = document.getElementById('signout_button');
+        var signInNote = document.getElementById('sign_in_note');
+        /**
+         *  On load, called to load the auth2 library and API client library.
+         */
+        function handleClientLoad() {
+            gapi.load('client:auth2', initClient);
+        }
+
+        /**
+         *  Initializes the API client library and sets up sign-in state
+         *  listeners.
+         */
+        function initClient() {
+            gapi.client.init({
                 apiKey: API_KEY,
                 clientId: CLIENT_ID,
                 discoveryDocs: DISCOVERY_DOCS,
                 scope: SCOPES
-              }).then(function () {
+            }).then(function () {
                 // Listen for sign-in state changes.
                 gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-      
+
                 // Handle the initial sign-in state.
                 updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
                 authorizeButton.onclick = handleAuthClick;
                 signoutButton.onclick = handleSignoutClick;
                 console.log('working1');
-              }, function(error) {
+            }, function (error) {
                 appendPre(JSON.stringify(error, null, 2));
-              });
-            }
-      
-            /**
-             *  Called when the signed in status changes, to update the UI
-             *  appropriately. After a sign-in, the API is called.
-             */
-            function updateSigninStatus(isSignedIn) {
-              if (isSignedIn) {
+            });
+        }
+
+        /**
+         *  Called when the signed in status changes, to update the UI
+         *  appropriately. After a sign-in, the API is called.
+         */
+        function updateSigninStatus(isSignedIn) {
+            if (isSignedIn) {
                 console.log('tony8');
                 authorizeButton.style.display = 'none';
                 signInNote.style.display = 'none';
@@ -169,85 +170,84 @@
                 console.log('tony9');
                 listFiles();
                 console.log('tony10');
-              } else {
+            } else {
                 console.log('tony11');
                 authorizeButton.style.display = 'block';
                 signInNote.style.display = 'block';
                 signoutButton.style.display = 'none';
                 console.log('tony12');
-              }
-              console.log('tony13');
             }
-      
-            /**
-             *  Sign in the user upon button click.
-             */
-            function handleAuthClick(event) {
-                console.log('tony14');
-              gapi.auth2.getAuthInstance().signIn();
-              console.log('tony15');
-            }
-      
-            /**
-             *  Sign out the user upon button click.
-             */
-            function handleSignoutClick(event) {
-                console.log('tony16');
-              deletePreContent();
-              gapi.auth2.getAuthInstance().signOut();
-              console.log('tony17');
-            }
-      
-            /**
-             * Append a pre element to the body containing the given message
-             * as its text node. Used to display the results of the API call.
-             *
-             * @param {string} message Text to be placed in pre element.
-             */
-            function appendPre(message) {
-              console.log('tony1');
-              var pre = document.getElementById('content');
-              var textContent = document.createTextNode(message + '\n');
-              pre.appendChild(textContent);
-              console.log('tony2');
-            }
-      
-            function deletePreContent() {
-                var pre = document.getElementById('content');
-                pre.innerHTML = '';
-            }
-            /**
-             * Print files.
-             */
-            function listFiles() {
-                console.log('tony3');
-              gapi.client.drive.files.list({
+            console.log('tony13');
+        }
+
+        /**
+         *  Sign in the user upon button click.
+         */
+        function handleAuthClick(event) {
+            console.log('tony14');
+            gapi.auth2.getAuthInstance().signIn();
+            console.log('tony15');
+        }
+
+        /**
+         *  Sign out the user upon button click.
+         */
+        function handleSignoutClick(event) {
+            console.log('tony16');
+            deletePreContent();
+            gapi.auth2.getAuthInstance().signOut();
+            console.log('tony17');
+        }
+
+        /**
+         * Append a pre element to the body containing the given message
+         * as its text node. Used to display the results of the API call.
+         *
+         * @param {string} message Text to be placed in pre element.
+         */
+        function appendPre(message) {
+            console.log('tony1');
+            var pre = document.getElementById('content');
+            var textContent = document.createTextNode(message + '\n');
+            pre.appendChild(textContent);
+            console.log('tony2');
+        }
+
+        function deletePreContent() {
+            var pre = document.getElementById('content');
+            pre.innerHTML = '';
+        }
+        /**
+         * Print files.
+         */
+        function listFiles() {
+            console.log('tony3');
+            gapi.client.drive.files.list({
                 'pageSize': 100,
                 'fields': "nextPageToken, files(id, name)"
-              }).then(function(response) {
+            }).then(function (response) {
                 console.log('tony4');
                 appendPre('Files:');
                 var files = response.result.files;
                 console.log('tony5');
                 if (files && files.length > 0) {
                     console.log('tony6');
-                  for (var i = 0; i < files.length; i++) {
-                    var file = files[i];
-                    appendPre(file.name + ' (' + file.id + ')');
-                  }
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        appendPre(file.name + ' (' + file.id + ')');
+                    }
                 } else {
                     console.log('tony7');
-                  appendPre('No files found.');
+                    appendPre('No files found.');
                 }
-              });
-            }
-      
-          </script>
-      
-          <script async defer src="https://apis.google.com/js/api.js"
-            onload="this.onload=function(){};handleClientLoad()"
-            onreadystatechange="if (this.readyState === 'complete') this.onload()">
-          </script>
-    </body>
+            });
+        }
+
+    </script>
+
+    <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+        </script>
+</body>
 
 </html>

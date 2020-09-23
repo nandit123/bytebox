@@ -23,6 +23,7 @@
     "require": "^2.4.20"
   },
   "devDependencies": {
+    "jslint": "^0.12.1",
     "nodemon": "^2.0.4"
   }
 }

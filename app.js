@@ -4,11 +4,11 @@ const port = 3000
 const bodyParser = require("body-parser");
 
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 // app.engine('html', require('ejs').renderFile);
 // app.set('view engine', 'html');
 
-app.set('view engine', 'ejs'); 
+app.set('view engine', 'ejs');
 var indexRouter = require('./routes/index.js')
 
 app.use('/', indexRouter);
