@@ -107,9 +107,12 @@
 
         <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
         <button id="signout_button" style="display: none;">Sign Out</button>
+        <button id="picker_button" style="display: none;">Picker</button>\
 
         <pre id="content" style="white-space: pre-wrap;"></pre>
     </div>
+
+    <div id="result"></div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
@@ -120,13 +123,74 @@
         // Array of API discovery doc URLs for APIs used by the quickstart
         var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 
+        // required for pickerAPI
+        var appId = "661879573898";
+
+        var pickerApiLoaded = false;
+        var oauthToken;
+
+        var developerKey = 'AIzaSyDxe3SDEXfrG1Wm491vyCtcC3ed_cmHGWA'
         // Authorization scopes required by the API; multiple scopes can be
         // included, separated by spaces.
         var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.metadata https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.photos.readonly https://www.googleapis.com/auth/drive.readonly';
 
         var authorizeButton = document.getElementById('authorize_button');
         var signoutButton = document.getElementById('signout_button');
+        var pickerButton = document.getElementById('picker_button');
         var signInNote = document.getElementById('sign_in_note');
+
+        function loadPicker() {
+            // gapi.load('auth', { 'callback': onAuthApiLoad });
+            console.log('load picker called');
+            gapi.load('picker', { 'callback': onPickerApiLoad });
+            console.log('picker loaded');
+        }
+
+        function onPickerApiLoad() {
+            pickerApiLoaded = true;
+            createPicker();
+        }
+
+        // Create and render a Picker object for searching images.
+        function createPicker() {
+            // when first time login, the oauthToken is generally undefined, hence added this code
+            if (!oauthToken) {
+                oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
+                console.log('inside createPicker() oauthToken setter 2: ', oauthToken)
+            }
+            console.log('tony createPicker func')
+            console.log(pickerApiLoaded);
+
+            if (pickerApiLoaded && oauthToken) {
+                var view = new google.picker.View(google.picker.ViewId.DOCS);
+                view.setMimeTypes("image/png,image/jpeg,image/jpg");
+                var picker = new google.picker.PickerBuilder()
+                    .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                    .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                    .setAppId(appId)
+                    .setOAuthToken(oauthToken)
+                    .addView(view)
+                    .addView(new google.picker.DocsUploadView())
+                    .setDeveloperKey(developerKey)
+                    .setCallback(pickerCallback)
+                    .build();
+                picker.setVisible(true);
+            }
+        }
+
+        // A simple callback implementation.
+        function pickerCallback(data) {
+            if (data.action == google.picker.Action.PICKED) {
+                let fileIdArray = [];
+                var fileId;
+                for (var i = 0; i < data.docs.length; i++) {
+                    fileId = fileIdArray.push(data.docs[i].id);
+                }
+                // var fileId = data.docs[0].id;
+                alert('The user selected: ' + fileIdArray);
+            }
+        }
+
         /**
          *  On load, called to load the auth2 library and API client library.
          */
@@ -152,7 +216,17 @@
                 updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
                 authorizeButton.onclick = handleAuthClick;
                 signoutButton.onclick = handleSignoutClick;
+                pickerButton.onclick = handlePickerClick;
                 console.log('working1');
+                // loadPicker();
+                // if (authResult && !authResult.error) {
+                //     console.log('tony auth if222')
+                //     oauthToken = authResult.access_token;
+                //     createPicker();
+                // }
+                oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
+                console.log('oauthToken setter: ', oauthToken)
+                console.log('working createPickerCalled');
             }, function (error) {
                 appendPre(JSON.stringify(error, null, 2));
             });
@@ -168,6 +242,7 @@
                 authorizeButton.style.display = 'none';
                 signInNote.style.display = 'none';
                 signoutButton.style.display = 'block';
+                pickerButton.style.display = 'block';
                 console.log('tony9');
                 listFiles();
                 console.log('tony10');
@@ -176,6 +251,7 @@
                 authorizeButton.style.display = 'block';
                 signInNote.style.display = 'block';
                 signoutButton.style.display = 'none';
+                pickerButton.style.display = 'none';
                 console.log('tony12');
             }
             console.log('tony13');
@@ -200,6 +276,11 @@
             console.log('tony17');
         }
 
+        function handlePickerClick(event) {
+            console.log('working picker clicked');
+            loadPicker();
+            console.log('working 2 picker clicked');
+        }
         /**
          * Append a pre element to the body containing the given message
          * as its text node. Used to display the results of the API call.
@@ -312,7 +393,7 @@
                         imageToDownload.download = "Image.png";
                         imageToDownload.click();
                     }
-                    xhr.send();
+                    // xhr.send();
                     console.log('captain2')
                 } else {
                     console.log('tony7');
@@ -323,8 +404,8 @@
     </script>
 
     <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
-        onreadystatechange="if (this.readyState === 'complete') this.onload()">
-        </script>
+        onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
+
 </body>
 
 </html>
