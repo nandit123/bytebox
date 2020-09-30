@@ -107,13 +107,17 @@
 
         <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
         <button id="signout_button" style="display: none;">Sign Out</button>
-        <button id="picker_button" style="display: none;">Picker</button>\
-
+        <button id="picker_button" style="display: none;">Picker</button>
+        <br>
+        <br>
         <pre id="content" style="white-space: pre-wrap;"></pre>
     </div>
 
     <div id="result"></div>
 
+    <div id="selectedItems">
+    </div>
+    <button onclick="transferFilesToSpaceDaemon()">Transfer Files</button>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
         // Client ID and API key from the Developer Console
@@ -178,16 +182,17 @@
             }
         }
 
+        let fileIdArray = [];
         // A simple callback implementation.
         function pickerCallback(data) {
             if (data.action == google.picker.Action.PICKED) {
-                let fileIdArray = [];
                 var fileId;
                 for (var i = 0; i < data.docs.length; i++) {
                     fileId = fileIdArray.push(data.docs[i].id);
                 }
                 // var fileId = data.docs[0].id;
-                alert('The user selected: ' + fileIdArray);
+                document.getElementById('selectedItems').innerHTML = fileIdArray;
+                // alert('The user selected: ' + fileIdArray);
             }
         }
 
@@ -287,17 +292,69 @@
          *
          * @param {string} message Text to be placed in pre element.
          */
+        // uncomment the below function statements to display the list of the files
         function appendPre(message) {
-            console.log('tony1');
-            var pre = document.getElementById('content');
-            var textContent = document.createTextNode(message + '\n');
-            pre.appendChild(textContent);
-            console.log('tony2');
+            // console.log('tony1');
+            // var pre = document.getElementById('content');
+            // var textContent = document.createTextNode(message + '\n');
+            // pre.appendChild(textContent);
+            // console.log('tony2');
         }
 
         function deletePreContent() {
             var pre = document.getElementById('content');
             pre.innerHTML = '';
+        }
+
+        async function transferFilesToSpaceDaemon() {
+            // fileIdArray;
+            await console.log('fileIdArray: ', fileIdArray);
+            var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
+            for await (index of fileIdArray) {
+                console.log('for index: ', index)
+            // for (var index = 0; index < fileIdArray.length; index++) {
+                // console.log('captain index1:', index, ' , fileIdArray length:', fileIdArray.length)
+                await console.log('working on file');
+                var fileId = index;
+                var xhr = await new XMLHttpRequest();
+                await xhr.open("GET", "https://www.googleapis.com/drive/v3/files/" + fileId + '?alt=media', true);
+                await xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                xhr.responseType = await 'arraybuffer'
+                // console.log('captain index2: ', index);
+                xhr.onload = function () {
+                    console.log('captain index3: ', index);
+                    //base64ArrayBuffer from https://gist.github.com/jonleighton/958841
+                    var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr.response);
+                    console.log('xhr.response => ', xhr.response);
+                    console.log('base64 => ' + '**' + index + '**', base64);
+
+                    var xhr2 = new XMLHttpRequest();
+                    var url = 'http://localhost:3000/transfer/' + index;
+                    var params = 'base64=' + encodeURI(base64);
+                    xhr2.open('POST', url, true);
+
+                    //Send the proper header information along with the request
+                     xhr2.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                    xhr2.onreadystatechange = function () {//Call a function when the state changes.
+                        if (xhr2.readyState == 4 && xhr2.status == 200) {
+                            console.log('image1 gone: ', xhr2.responseText);
+                        }
+                    }
+                    xhr2.send(params);
+
+                    // console.log('captain index4: ', index);
+                    //do something with the base64 image here
+                    // var imageToDownload = document.createElement("a");
+                    // imageToDownload.href = base64;
+                    // imageToDownload.download = "Image.png";
+                    // imageToDownload.click();
+                }
+                // console.log('captain index5: ', index);
+                await xhr.send();
+                await console.log('done working on file')
+                console.log('captain index6: ', index);
+            }
         }
 
         function base64ArrayBuffer(arrayBuffer) {
@@ -386,12 +443,29 @@
                     xhr.onload = function () {
                         //base64ArrayBuffer from https://gist.github.com/jonleighton/958841
                         var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr.response);
+                        console.log('xhr.response => ', xhr.response);
+                        console.log('base64 => ', base64);
+
+                        var xhr2 = new XMLHttpRequest();
+                        var url = 'http://localhost:3000/transfer/'
+                        var params = 'base64=' + encodeURI(base64);
+                        xhr2.open('POST', url, true);
+
+                        //Send the proper header information along with the request
+                        xhr2.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                        xhr2.onreadystatechange = function () {//Call a function when the state changes.
+                            if (xhr2.readyState == 4 && xhr2.status == 200) {
+                                console.log('image1 gone: ', xhr2.responseText);
+                            }
+                        }
+                        xhr2.send(params);
 
                         //do something with the base64 image here
-                        var imageToDownload = document.createElement("a");
-                        imageToDownload.href = base64;
-                        imageToDownload.download = "Image.png";
-                        imageToDownload.click();
+                        // var imageToDownload = document.createElement("a");
+                        // imageToDownload.href = base64;
+                        // imageToDownload.download = "Image.png";
+                        // imageToDownload.click();
                     }
                     // xhr.send();
                     console.log('captain2')

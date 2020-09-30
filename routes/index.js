@@ -16,9 +16,30 @@ const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
 // time.
 const TOKEN_PATH = 'token.json';
 
+const base64Img = require('base64-img');
+
 /* GET users listing. */
 router.get('/', function (req, res) {
     res.render('index', { name: "Byte me" });
+});
+
+router.post('/transfer/:id', function (req, res) {
+    console.log('entered transfer function');
+    // console.log('base64 value transferred: ', req.body.base64);
+    // var base64Image = decodeURI(req.params.base64Image);
+    // console.log('yo string: ', req.body.base64)
+    var imageId = req.params.id;
+    console.log('yoooooooooo')
+    let base64String = decodeURI(req.body.base64).replace(/\s/g, '+');
+    console.log('tony stark base64String: ', base64String)
+    // Remove header
+    let base64Image = base64String.split(';base64,').pop();
+    var x = Math.floor((Math.random() * 10) + 1); // random number x
+    var destImage = 'image' + x + '.png';
+    fs.writeFile(destImage, base64Image, { encoding: 'base64' }, function (err) {
+        console.log('File created');
+    });
+    res.send('sent');
 });
 
 router.get('/download', function (req, res) {
