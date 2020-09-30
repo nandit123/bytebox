@@ -305,55 +305,58 @@
             var pre = document.getElementById('content');
             pre.innerHTML = '';
         }
-
+        var subIndex = 0;
         async function transferFilesToSpaceDaemon() {
             // fileIdArray;
             await console.log('fileIdArray: ', fileIdArray);
             var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
-            for await (index of fileIdArray) {
-                console.log('for index: ', index)
-            // for (var index = 0; index < fileIdArray.length; index++) {
+            // for await (index of fileIdArray) {
+            // console.log('for index: ', index)
+            var xhr = [];
+            var xhr2 = [];
+            for (var index = 0; index < fileIdArray.length; index++) {
                 // console.log('captain index1:', index, ' , fileIdArray length:', fileIdArray.length)
-                await console.log('working on file');
-                var fileId = index;
-                var xhr = await new XMLHttpRequest();
-                await xhr.open("GET", "https://www.googleapis.com/drive/v3/files/" + fileId + '?alt=media', true);
-                await xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                xhr.responseType = await 'arraybuffer'
-                // console.log('captain index2: ', index);
-                xhr.onload = function () {
-                    console.log('captain index3: ', index);
-                    //base64ArrayBuffer from https://gist.github.com/jonleighton/958841
-                    var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr.response);
-                    console.log('xhr.response => ', xhr.response);
-                    console.log('base64 => ' + '**' + index + '**', base64);
+                function xhrcall(index, fileIdArray, accessToken) {
+                    console.log('working on file');
+                    var fileId = fileIdArray[index];
+                    console.log('current fileId: ', fileId)
+                    xhr[index] = new XMLHttpRequest();
+                    xhr[index].open("GET", "https://www.googleapis.com/drive/v3/files/" + fileId + '?alt=media', true);
+                    xhr[index].setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                    xhr[index].responseType = 'arraybuffer'
+                    // console.log('captain index2: ', index);
+                    xhr[index].onload = function () {
+                        console.log('captain index3: ', subIndex);
+                        //base64ArrayBuffer from https://gist.github.com/jonleighton/958841
+                        var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr[index].response);
+                        console.log('xhr.response => ', xhr[index].response);
+                        console.log('base64 => ' + '**' + subIndex + '**', base64);
 
-                    var xhr2 = new XMLHttpRequest();
-                    var url = 'http://localhost:3000/transfer/' + index;
-                    var params = 'base64=' + encodeURI(base64);
-                    xhr2.open('POST', url, true);
+                        xhr2[index] = new XMLHttpRequest();
+                        var url = 'http://localhost:3000/transfer/' + index;
+                        var params = 'base64=' + encodeURI(base64);
+                        xhr2[index].open('POST', url, true);
 
-                    //Send the proper header information along with the request
-                     xhr2.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                        //Send the proper header information along with the request
+                        xhr2[index].setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-                    xhr2.onreadystatechange = function () {//Call a function when the state changes.
-                        if (xhr2.readyState == 4 && xhr2.status == 200) {
-                            console.log('image1 gone: ', xhr2.responseText);
+                        xhr2[index].onreadystatechange = function () {//Call a function when the state changes.
+                            if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
+                                console.log('image1 gone: ', xhr2[index].responseText);
+                            }
                         }
-                    }
-                    xhr2.send(params);
+                        xhr2[index].send(params);
 
-                    // console.log('captain index4: ', index);
-                    //do something with the base64 image here
-                    // var imageToDownload = document.createElement("a");
-                    // imageToDownload.href = base64;
-                    // imageToDownload.download = "Image.png";
-                    // imageToDownload.click();
-                }
-                // console.log('captain index5: ', index);
-                await xhr.send();
-                await console.log('done working on file')
-                console.log('captain index6: ', index);
+                        console.log('captain index4: ', subIndex);
+                        subIndex += 1;
+                    }
+                    console.log('captain index5: ', index);
+                    xhr[index].send();
+                    console.log('done working on file')
+                    console.log('captain index6: ', index);
+                };
+                xhrcall(index, fileIdArray, accessToken);
+
             }
         }
 
