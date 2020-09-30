@@ -333,7 +333,7 @@
                         console.log('base64 => ' + '**' + subIndex + '**', base64);
 
                         xhr2[index] = new XMLHttpRequest();
-                        var url = 'http://localhost:3000/transfer/' + index;
+                        var url = 'http://localhost:3000/transfer/' + fileId;
                         var params = 'base64=' + encodeURI(base64);
                         xhr2[index].open('POST', url, true);
 
