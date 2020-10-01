@@ -106,18 +106,41 @@
             need to first connect to your google account</p>
 
         <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
-        <button id="signout_button" style="display: none;">Sign Out</button>
-        <button id="picker_button" style="display: none;">Picker</button>
+        <button id="signout_button" style="display: none; margin-bottom: 20px;" class="btn btn-danger">Sign Out</button>
+
+        <button id="picker_button" style="display: none; margin-bottom: 5px;" class="btn btn-primary">Pick files from
+            Google Drive</button>
+        <!-- <button id="create_bucket_action" class="btn btn-primary">Create a new bucket</button> -->
         <br>
-        <br>
-        <pre id="content" style="white-space: pre-wrap;"></pre>
+        <div style="margin-left: 200px;">
+            <pre id="content" style="white-space: pre-wrap;"></pre>
+            <!-- <div id="result"></div> -->
+
+            <!-- pick files from google drive button -->
+            <div id="selectedItems"></div>
+            <br>
+            <div style="width: 300px; margin-bottom: 10px;">
+                <input type="text" id="bucket_name" placeholder="Bucket Name" style="display: none;">
+            </div>
+            <button id="transfer_button" style="display: none;" class="btn btn-success">Transfer Files</button>
+
+            <strong>
+                <div id="file_transfer_status" style="display: none;"></div>
+            </strong>
+
+            <!-- create a new bucket button -->
+            <!-- <div style="width: 300px; margin-bottom: 10px;">
+                <input type="text" id="new_bucket_name" placeholder="New Bucket Name" style="display: none;">
+            </div>
+            <button id="create_bucket" style="display: none;" class="btn btn-success">Transfer Files</button>
+
+            <strong>
+                <div id="button_create_success" style="display: none;"></div>
+            </strong> -->
+        </div>
     </div>
 
-    <div id="result"></div>
 
-    <div id="selectedItems">
-    </div>
-    <button onclick="transferFilesToSpaceDaemon()" id="transfer_button" style="display: none;">Transfer Files</button>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
         // Client ID and API key from the Developer Console
@@ -143,6 +166,8 @@
         var pickerButton = document.getElementById('picker_button');
         var transferButton = document.getElementById('transfer_button');
         var signInNote = document.getElementById('sign_in_note');
+        var bucketNameInput = document.getElementById('bucket_name');
+        var fileTransferStatusDiv = document.getElementById('file_transfer_status');
 
         function loadPicker() {
             // gapi.load('auth', { 'callback': onAuthApiLoad });
@@ -187,7 +212,9 @@
                     fileId = fileIdArray.push(data.docs[i].id);
                 }
                 // var fileId = data.docs[0].id;
-                document.getElementById('selectedItems').innerHTML = fileIdArray;
+                document.getElementById('selectedItems').innerHTML = '<b>Files selected => </b>' + fileIdArray;
+                bucketNameInput.style.display = 'block';
+                transferButton.style.display = 'block';
                 // alert('The user selected: ' + fileIdArray);
             }
         }
@@ -218,8 +245,9 @@
                 authorizeButton.onclick = handleAuthClick;
                 signoutButton.onclick = handleSignoutClick;
                 pickerButton.onclick = handlePickerClick;
-
-                oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
+                transferButton.onclick = transferFilesToSpaceDaemon;
+                bucketNameInput.value = '';
+                oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
             }, function (error) {
                 appendPre(JSON.stringify(error, null, 2));
             });
@@ -235,7 +263,9 @@
                 signInNote.style.display = 'none';
                 signoutButton.style.display = 'block';
                 pickerButton.style.display = 'block';
-                transferButton.style.display = 'block';
+                // transferButton.style.display = 'block';
+                // bucketNameInput.style.display = 'block';
+                fileTransferStatusDiv.style.display = 'block';
                 listFiles();
             } else {
                 authorizeButton.style.display = 'block';
@@ -243,6 +273,8 @@
                 signoutButton.style.display = 'none';
                 pickerButton.style.display = 'none';
                 transferButton.style.display = 'none';
+                bucketNameInput.style.display = 'none';
+                fileTransferStatusDiv.style.display = 'none';
             }
         }
 
@@ -265,6 +297,8 @@
 
         function handlePickerClick(event) {
             document.getElementById('selectedItems').innerHTML = '';
+            document.getElementById('file_transfer_status').innerHTML = '';
+
             fileIdArray = [];
             loadPicker();
         }
@@ -285,9 +319,12 @@
             var pre = document.getElementById('content');
             pre.innerHTML = '';
         }
-        var subIndex = 0;
-        async function transferFilesToSpaceDaemon() {
+
+        async function transferFilesToSpaceDaemon(event) {
             // fileIdArray;
+            console.log('enteredFilesTo space daemon function')
+            var bucketName = document.getElementById("bucket_name").value;
+            console.log('bucketname entered is: ', bucketName);
             var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
             var xhr = [];
             var xhr2 = [];
@@ -303,7 +340,7 @@
                         var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr[index].response);
 
                         xhr2[index] = new XMLHttpRequest();
-                        var url = 'http://localhost:3000/transfer/' + fileId;
+                        var url = 'http://localhost:3000/transfer/' + fileId + '/' + bucketName;
                         var params = 'base64=' + encodeURI(base64);
                         xhr2[index].open('POST', url, true);
 
@@ -313,16 +350,14 @@
                         xhr2[index].onreadystatechange = function () {//Call a function when the state changes.
                             if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
                                 console.log('image transfer status: ', xhr2[index].responseText);
+                                document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
                             }
                         }
                         xhr2[index].send(params);
-
-                        subIndex += 1;
                     }
                     xhr[index].send();
                 };
                 xhrcall(index, fileIdArray, accessToken);
-
             }
         }
 

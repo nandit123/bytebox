@@ -16,7 +16,7 @@ router.get('/', function (req, res) {
     res.render('index', { name: "Byte me" });
 });
 
-router.post('/transfer/:id', function (req, res) {
+router.post('/transfer/:id/:bucketName', function (req, res) {
     console.log('entered transfer function');
     var imageId = req.params.id;
     let base64String = decodeURI(req.body.base64).replace(/\s/g, '+');
@@ -35,7 +35,7 @@ router.post('/transfer/:id', function (req, res) {
     });
 
     const stream = client.addItems({
-        bucket: 'bucket5',
+        bucket: req.params.bucketName,
         targetPath: '/', // path in the bucket to be saved
         sourcePaths: [destImage] // adding image one by one as this transfer route is called for every image
     });
@@ -55,6 +55,24 @@ router.post('/transfer/:id', function (req, res) {
 
     res.send('sent');
 });
+
+router.get('/createFolder/:name', function (req, res) {
+    client
+        .createBucket({ slug: req.params.name })
+        .then((res) => {
+            const bucket = res.getBucket();
+
+            console.log(bucket.getKey());
+            console.log(bucket.getName());
+            console.log(bucket.getPath());
+            console.log(bucket.getCreatedat());
+            console.log(bucket.getUpdatedat());
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+});
+
 
 
 module.exports = router;
