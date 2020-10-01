@@ -282,6 +282,8 @@
         }
 
         function handlePickerClick(event) {
+            document.getElementById('selectedItems').innerHTML = '';
+            fileIdArray = [];
             console.log('working picker clicked');
             loadPicker();
             console.log('working 2 picker clicked');
