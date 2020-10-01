@@ -117,7 +117,7 @@
 
     <div id="selectedItems">
     </div>
-    <button onclick="transferFilesToSpaceDaemon()">Transfer Files</button>
+    <button onclick="transferFilesToSpaceDaemon()" id="transfer_button" style="display: none;">Transfer Files</button>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
         // Client ID and API key from the Developer Console
@@ -141,6 +141,7 @@
         var authorizeButton = document.getElementById('authorize_button');
         var signoutButton = document.getElementById('signout_button');
         var pickerButton = document.getElementById('picker_button');
+        var transferButton = document.getElementById('transfer_button');
         var signInNote = document.getElementById('sign_in_note');
 
         function loadPicker() {
@@ -234,12 +235,14 @@
                 signInNote.style.display = 'none';
                 signoutButton.style.display = 'block';
                 pickerButton.style.display = 'block';
+                transferButton.style.display = 'block';
                 listFiles();
             } else {
                 authorizeButton.style.display = 'block';
                 signInNote.style.display = 'block';
                 signoutButton.style.display = 'none';
                 pickerButton.style.display = 'none';
+                transferButton.style.display = 'none';
             }
         }
 
@@ -255,6 +258,8 @@
          */
         function handleSignoutClick(event) {
             deletePreContent();
+            document.getElementById('selectedItems').innerHTML = '';
+            fileIdArray = [];
             gapi.auth2.getAuthInstance().signOut();
         }
 
