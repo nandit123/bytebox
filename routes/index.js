@@ -19,7 +19,6 @@ router.get('/', function (req, res) {
 router.post('/transfer/:id', function (req, res) {
     console.log('entered transfer function');
     var imageId = req.params.id;
-    console.log('yoooooooooo')
     let base64String = decodeURI(req.body.base64).replace(/\s/g, '+');
     let base64Image = base64String.split(';base64,').pop();
 
@@ -30,7 +29,6 @@ router.post('/transfer/:id', function (req, res) {
         console.log('local_temp created');
     }
     var destImage = __dirname + '\\local_temp\\image_' + imageId + '.png';
-    console.log('destImage==', destImage)
 
     fs.writeFile(destImage, base64Image, { encoding: 'base64' }, function (err) {
         console.log('File created');
@@ -51,9 +49,7 @@ router.post('/transfer/:id', function (req, res) {
     });
 
     stream.on('end', () => {
-        console.log('file deletion started')
         fs.unlinkSync(destImage);
-        console.log('fileDeleted')
         console.log('end');
     });
 
