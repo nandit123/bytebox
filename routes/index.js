@@ -36,6 +36,8 @@ router.post('/transfer/:id', function (req, res) {
         console.log('File created');
     });
 
+    const pathToDir = path.join(__dirname, "local_temp")
+
     const stream = client.addItems({
         bucket: 'bucket5',
         targetPath: '/', // path in the bucket to be saved
@@ -51,34 +53,46 @@ router.post('/transfer/:id', function (req, res) {
     });
 
     stream.on('end', () => {
+        console.log('file deletion started')
+        fs.unlinkSync(destImage);
+        console.log('fileDeleted')
         console.log('end');
     });
 
-    // const removeDir = function (path) {
-    //     if (fs.existsSync(path)) {
-    //         const files = fs.readdirSync(path)
+    const removeDir = function (path) {
+        if (fs.existsSync(path)) {
+            console.log('friday1')
+            const files = fs.readdirSync(path)
+            console.log('friday2')
 
-    //         if (files.length > 0) {
-    //             files.forEach(function (filename) {
-    //                 if (fs.statSync(path + "/" + filename).isDirectory()) {
-    //                     removeDir(path + "/" + filename)
-    //                 } else {
-    //                     fs.unlinkSync(path + "/" + filename)
-    //                 }
-    //             })
-    //             fs.rmdirSync(path)
-    //         } else {
-    //             fs.rmdirSync(path)
-    //         }
-    //     } else {
-    //         console.log("Directory path not found.")
-    //     }
-    // }
+            if (files.length > 0) {
+                console.log('friday3')
+                files.forEach(function (filename) {
+                    console.log('friday4')
+                    if (fs.statSync(path + "/" + filename).isDirectory()) {
+                        console.log('friday5')
+                        removeDir(path + "/" + filename)
+                    } else {
+                        console.log('friday6')
+                        fs.unlinkSync(path + "/" + filename)
+                    }
+                })
+                console.log('friday7')
+                // fs.rmdirSync(path)
+            } else {
+                console.log('friday8')
+                // fs.rmdirSync(path)
+            }
+        } else {
+            console.log('friday9')
+            console.log("Directory path not found.")
+        }
+    }
 
-    // const pathToDir = path.join(__dirname, "local_temp")
 
     // removeDir(pathToDir)
 
+    console.log('path to dir: ', pathToDir)
     res.send('sent');
 });
 
