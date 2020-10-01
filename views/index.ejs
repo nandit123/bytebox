@@ -145,9 +145,7 @@
 
         function loadPicker() {
             // gapi.load('auth', { 'callback': onAuthApiLoad });
-            console.log('load picker called');
             gapi.load('picker', { 'callback': onPickerApiLoad });
-            console.log('picker loaded');
         }
 
         function onPickerApiLoad() {
@@ -160,10 +158,7 @@
             // when first time login, the oauthToken is generally undefined, hence added this code
             if (!oauthToken) {
                 oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
-                console.log('inside createPicker() oauthToken setter 2: ', oauthToken)
             }
-            console.log('tony createPicker func')
-            console.log(pickerApiLoaded);
 
             if (pickerApiLoaded && oauthToken) {
                 var view = new google.picker.View(google.picker.ViewId.DOCS);
@@ -222,16 +217,8 @@
                 authorizeButton.onclick = handleAuthClick;
                 signoutButton.onclick = handleSignoutClick;
                 pickerButton.onclick = handlePickerClick;
-                console.log('working1');
-                // loadPicker();
-                // if (authResult && !authResult.error) {
-                //     console.log('tony auth if222')
-                //     oauthToken = authResult.access_token;
-                //     createPicker();
-                // }
+
                 oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
-                console.log('oauthToken setter: ', oauthToken)
-                console.log('working createPickerCalled');
             }, function (error) {
                 appendPre(JSON.stringify(error, null, 2));
             });
@@ -243,50 +230,38 @@
          */
         function updateSigninStatus(isSignedIn) {
             if (isSignedIn) {
-                console.log('tony8');
                 authorizeButton.style.display = 'none';
                 signInNote.style.display = 'none';
                 signoutButton.style.display = 'block';
                 pickerButton.style.display = 'block';
-                console.log('tony9');
                 listFiles();
-                console.log('tony10');
             } else {
-                console.log('tony11');
                 authorizeButton.style.display = 'block';
                 signInNote.style.display = 'block';
                 signoutButton.style.display = 'none';
                 pickerButton.style.display = 'none';
-                console.log('tony12');
             }
-            console.log('tony13');
         }
 
         /**
          *  Sign in the user upon button click.
          */
         function handleAuthClick(event) {
-            console.log('tony14');
             gapi.auth2.getAuthInstance().signIn();
-            console.log('tony15');
         }
 
         /**
          *  Sign out the user upon button click.
          */
         function handleSignoutClick(event) {
-            console.log('tony16');
             deletePreContent();
             gapi.auth2.getAuthInstance().signOut();
-            console.log('tony17');
         }
 
         function handlePickerClick(event) {
             document.getElementById('selectedItems').innerHTML = '';
             fileIdArray = [];
-            console.log('working picker clicked');
             loadPicker();
-            console.log('working 2 picker clicked');
         }
         /**
          * Append a pre element to the body containing the given message
@@ -296,11 +271,9 @@
          */
         // uncomment the below function statements to display the list of the files
         function appendPre(message) {
-            // console.log('tony1');
             // var pre = document.getElementById('content');
             // var textContent = document.createTextNode(message + '\n');
             // pre.appendChild(textContent);
-            // console.log('tony2');
         }
 
         function deletePreContent() {
@@ -310,29 +283,19 @@
         var subIndex = 0;
         async function transferFilesToSpaceDaemon() {
             // fileIdArray;
-            await console.log('fileIdArray: ', fileIdArray);
             var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
-            // for await (index of fileIdArray) {
-            // console.log('for index: ', index)
             var xhr = [];
             var xhr2 = [];
             for (var index = 0; index < fileIdArray.length; index++) {
-                // console.log('captain index1:', index, ' , fileIdArray length:', fileIdArray.length)
                 function xhrcall(index, fileIdArray, accessToken) {
-                    console.log('working on file');
                     var fileId = fileIdArray[index];
-                    console.log('current fileId: ', fileId)
                     xhr[index] = new XMLHttpRequest();
                     xhr[index].open("GET", "https://www.googleapis.com/drive/v3/files/" + fileId + '?alt=media', true);
                     xhr[index].setRequestHeader('Authorization', 'Bearer ' + accessToken);
                     xhr[index].responseType = 'arraybuffer'
-                    // console.log('captain index2: ', index);
                     xhr[index].onload = function () {
-                        console.log('captain index3: ', subIndex);
                         //base64ArrayBuffer from https://gist.github.com/jonleighton/958841
                         var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr[index].response);
-                        console.log('xhr.response => ', xhr[index].response);
-                        console.log('base64 => ' + '**' + subIndex + '**', base64);
 
                         xhr2[index] = new XMLHttpRequest();
                         var url = 'http://localhost:3000/transfer/' + fileId;
@@ -344,18 +307,14 @@
 
                         xhr2[index].onreadystatechange = function () {//Call a function when the state changes.
                             if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
-                                console.log('image1 gone: ', xhr2[index].responseText);
+                                console.log('image transfer status: ', xhr2[index].responseText);
                             }
                         }
                         xhr2[index].send(params);
 
-                        console.log('captain index4: ', subIndex);
                         subIndex += 1;
                     }
-                    console.log('captain index5: ', index);
                     xhr[index].send();
-                    console.log('done working on file')
-                    console.log('captain index6: ', index);
                 };
                 xhrcall(index, fileIdArray, accessToken);
 
@@ -418,27 +377,17 @@
          * Print files.
          */
         function listFiles() {
-            // axios.get('http://localhost:3000/download/')
-            //     .then(response => {
-            //         console.log(response.data);
-            //     })
-            //     .catch(error => console.error(error));
-
             gapi.client.drive.files.list({
                 'pageSize': 5,
                 'fields': "nextPageToken, files(id, name)"
             }).then(function (response) {
-                console.log('tony4');
                 appendPre('Files:');
                 var files = response.result.files;
-                console.log('tony5');
                 if (files && files.length > 0) {
-                    console.log('tony6');
                     for (var i = 0; i < files.length; i++) {
                         var file = files[i];
                         appendPre(file.name + ' (' + file.id + ')');
                     }
-                    console.log('captain1');
                     let fileId = '1qvkLVJjVYXloRY6TrEbTyKjGwScxyIdr';
                     var accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
                     var xhr = new XMLHttpRequest();
@@ -448,8 +397,6 @@
                     xhr.onload = function () {
                         //base64ArrayBuffer from https://gist.github.com/jonleighton/958841
                         var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr.response);
-                        console.log('xhr.response => ', xhr.response);
-                        console.log('base64 => ', base64);
 
                         var xhr2 = new XMLHttpRequest();
                         var url = 'http://localhost:3000/transfer/'
@@ -461,7 +408,6 @@
 
                         xhr2.onreadystatechange = function () {//Call a function when the state changes.
                             if (xhr2.readyState == 4 && xhr2.status == 200) {
-                                console.log('image1 gone: ', xhr2.responseText);
                             }
                         }
                         xhr2.send(params);
@@ -473,9 +419,7 @@
                         // imageToDownload.click();
                     }
                     // xhr.send();
-                    console.log('captain2')
                 } else {
-                    console.log('tony7');
                     appendPre('No files found.');
                 }
             });
