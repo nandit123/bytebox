@@ -108,11 +108,14 @@
         <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
         <button id="signout_button" style="display: none; margin-bottom: 20px;" class="btn btn-danger">Sign Out</button>
 
-        <button id="picker_button" style="display: none; margin-bottom: 5px;" class="btn btn-primary">Transfer files from
+        <button id="picker_button" style="display: none; margin-bottom: 5px;" class="btn btn-primary">Transfer files
+            from
             Google Drive</button>
         <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new bucket</button>
         <br>
         <div id="bucketsDiv"></div>
+        <div id="listDirectoriesDiv"></div>
+
         <div style="margin-left: 200px;">
             <pre id="content" style="white-space: pre-wrap;"></pre>
             <!-- <div id="result"></div> -->
@@ -172,6 +175,7 @@
         var bucketNameInput = document.getElementById('bucket_name');
         var fileTransferStatusDiv = document.getElementById('file_transfer_status');
 
+        var currentBucket = '';
         function loadPicker() {
             // gapi.load('auth', { 'callback': onAuthApiLoad });
             gapi.load('picker', { 'callback': onPickerApiLoad });
@@ -276,6 +280,7 @@
                 fileTransferStatusDiv.style.display = 'block';
                 createBucketActionButton.style.display = 'block';
                 listFiles();
+                showBuckets();
             } else {
                 authorizeButton.style.display = 'block';
                 signInNote.style.display = 'block';
@@ -464,6 +469,67 @@
             }
 
             return base64
+        }
+
+        // show all buckets in the bucketsDiv
+        function showBuckets() {
+            var xhr = new XMLHttpRequest();
+            var url = 'http://localhost:3000/listBuckets';
+            xhr.open('GET', url, true);
+
+            //Send the proper header information along with the request
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {//Call a function when the state changes.
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log('list of buckets: ', xhr.responseText);
+                    var responseText = JSON.parse(xhr.responseText);
+                    for (var i = 0; i < responseText.length; i++) {
+                        var div = document.createElement("div");
+                        div.style.display = "inline-block";
+                        div.style.backgroundColor = "#ccc";
+                        div.style.border = "1px black solid";
+                        div.style.padding = "30px"
+                        div.style.margin = "5px"
+                        div.innerHTML = responseText[i];
+                        div.id = responseText[i];
+                        div.class = "bucket_class";
+                        div.style.cursor = "pointer";
+                        div.onclick = clickBucket;
+                        document.getElementById("bucketsDiv").appendChild(div);
+                    }
+                }
+            }
+            xhr.send();
+        }
+
+        function clickBucket() {
+            if (currentBucket != '') {
+                document.getElementById(currentBucket).style.backgroundColor = "#ccc";
+                document.getElementById(currentBucket).style.color = "#000";
+            }
+            currentBucket = this.innerHTML;
+            document.getElementById(currentBucket).style.backgroundColor = "#333";
+            document.getElementById(currentBucket).style.color = "#fff";
+
+            var xhr = new XMLHttpRequest();
+            var url = 'http://localhost:3000/listBucketDirectories/' + currentBucket;
+            xhr.open('GET', url, true);
+
+            //Send the proper header information along with the request
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {//Call a function when the state changes.
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById('listDirectoriesDiv').innerHTML = '';
+                    for (var i = 0; i < response.length; i++) {
+                        document.getElementById('listDirectoriesDiv').innerHTML += response[i] + '<br>';
+                    }
+
+                }
+            }
+            xhr.send();
         }
 
         /**

@@ -97,5 +97,33 @@ router.get('/listBuckets', function (req, res) {
         });
 })
 
+router.get('/listBucketDirectories/:bucket', function (req, res) {
+    var list = [];
+    client
+        .listDirectories({ bucket: req.params.bucket })
+        .then((result) => {
+            const entries = result.getEntriesList();
+
+            entries.forEach((entry) => {
+                console.log(entry.getPath());
+                console.log(entry.getName());
+                console.log(entry.getIsdir());
+                console.log(entry.getCreated());
+                console.log(entry.getUpdated());
+                console.log(entry.getIpfshash());
+                console.log(entry.getSizeinbytes());
+                console.log(entry.getFileextension());
+                console.log(entry.getIslocallyavailable());
+                console.log(entry.getBackupcount());
+                console.log(entry.getMembersList());
+                list.push('<b>File ID: </b>' + entry.getName() + ' | <b>ipfs hash: </b>' + entry.getIpfshash());
+            });
+            res.send(list);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
+})
 
 module.exports = router;
