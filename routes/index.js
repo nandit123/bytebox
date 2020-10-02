@@ -56,7 +56,7 @@ router.post('/transfer/:id/:bucketName', function (req, res) {
     res.send('sent');
 });
 
-router.get('/createFolder/:name', function (req, res) {
+router.post('/createFolder/:name', function (req, res) {
     client
         .createBucket({ slug: req.params.name })
         .then((res) => {
@@ -71,8 +71,31 @@ router.get('/createFolder/:name', function (req, res) {
         .catch((err) => {
             console.error(err);
         });
+    res.send('bucket created')
 });
 
+router.get('/listBuckets', function (req, res) {
+    var bucketList = [];
+    client
+        .listBuckets()
+        .then((result) => {
+            const buckets = result.getBucketsList();
+
+            buckets.forEach((bucket) => {
+                console.log('key:', bucket.getKey());
+                console.log('name:', bucket.getName());
+                bucketList.push(bucket.getName());
+                console.log('path:', bucket.getPath());
+                console.log('createdAt:', bucket.getCreatedat());
+                console.log('updatedAt:', bucket.getUpdatedat());
+            });
+            console.log(bucketList);
+            res.send(bucketList);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+})
 
 
 module.exports = router;

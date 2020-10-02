@@ -108,10 +108,11 @@
         <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
         <button id="signout_button" style="display: none; margin-bottom: 20px;" class="btn btn-danger">Sign Out</button>
 
-        <button id="picker_button" style="display: none; margin-bottom: 5px;" class="btn btn-primary">Pick files from
+        <button id="picker_button" style="display: none; margin-bottom: 5px;" class="btn btn-primary">Transfer files from
             Google Drive</button>
-        <!-- <button id="create_bucket_action" class="btn btn-primary">Create a new bucket</button> -->
+        <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new bucket</button>
         <br>
+        <div id="bucketsDiv"></div>
         <div style="margin-left: 200px;">
             <pre id="content" style="white-space: pre-wrap;"></pre>
             <!-- <div id="result"></div> -->
@@ -129,14 +130,14 @@
             </strong>
 
             <!-- create a new bucket button -->
-            <!-- <div style="width: 300px; margin-bottom: 10px;">
+            <div style="width: 300px; margin-bottom: 10px;">
                 <input type="text" id="new_bucket_name" placeholder="New Bucket Name" style="display: none;">
             </div>
-            <button id="create_bucket" style="display: none;" class="btn btn-success">Transfer Files</button>
+            <button id="create_bucket" style="display: none;" class="btn btn-success">Create Bucket</button>
 
             <strong>
-                <div id="button_create_success" style="display: none;"></div>
-            </strong> -->
+                <div id="bucket_create_status" style="display: none;"></div>
+            </strong>
         </div>
     </div>
 
@@ -164,7 +165,9 @@
         var authorizeButton = document.getElementById('authorize_button');
         var signoutButton = document.getElementById('signout_button');
         var pickerButton = document.getElementById('picker_button');
+        var createBucketActionButton = document.getElementById('create_bucket_action');
         var transferButton = document.getElementById('transfer_button');
+        var createBucketButton = document.getElementById('create_bucket')
         var signInNote = document.getElementById('sign_in_note');
         var bucketNameInput = document.getElementById('bucket_name');
         var fileTransferStatusDiv = document.getElementById('file_transfer_status');
@@ -212,9 +215,11 @@
                     fileId = fileIdArray.push(data.docs[i].id);
                 }
                 // var fileId = data.docs[0].id;
+                document.getElementById('selectedItems').style.display = 'block';
                 document.getElementById('selectedItems').innerHTML = '<b>Files selected => </b>' + fileIdArray;
                 bucketNameInput.style.display = 'block';
                 transferButton.style.display = 'block';
+                fileTransferStatusDiv.style.display = 'block';
                 // alert('The user selected: ' + fileIdArray);
             }
         }
@@ -245,7 +250,9 @@
                 authorizeButton.onclick = handleAuthClick;
                 signoutButton.onclick = handleSignoutClick;
                 pickerButton.onclick = handlePickerClick;
+                createBucketActionButton.onclick = handleCreateBucketUI;
                 transferButton.onclick = transferFilesToSpaceDaemon;
+                createBucketButton.onclick = createBucket;
                 bucketNameInput.value = '';
                 oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
             }, function (error) {
@@ -261,20 +268,29 @@
             if (isSignedIn) {
                 authorizeButton.style.display = 'none';
                 signInNote.style.display = 'none';
+
                 signoutButton.style.display = 'block';
                 pickerButton.style.display = 'block';
                 // transferButton.style.display = 'block';
                 // bucketNameInput.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
+                createBucketActionButton.style.display = 'block';
                 listFiles();
             } else {
                 authorizeButton.style.display = 'block';
                 signInNote.style.display = 'block';
+
                 signoutButton.style.display = 'none';
                 pickerButton.style.display = 'none';
                 transferButton.style.display = 'none';
                 bucketNameInput.style.display = 'none';
                 fileTransferStatusDiv.style.display = 'none';
+
+                createBucketActionButton.style.display = 'none';
+                createBucketButton.style.display = 'none';
+                document.getElementById('new_bucket_name').style.display = 'none';
+                document.getElementById('bucket_create_status').style.display = 'none';
+
             }
         }
 
@@ -296,11 +312,30 @@
         }
 
         function handlePickerClick(event) {
+            document.getElementById('create_bucket').style.display = 'none';
+            document.getElementById('new_bucket_name').style.display = 'none';
+            document.getElementById('bucket_create_status').style.display = 'none';
+
             document.getElementById('selectedItems').innerHTML = '';
             document.getElementById('file_transfer_status').innerHTML = '';
 
             fileIdArray = [];
             loadPicker();
+        }
+
+        function handleCreateBucketUI(event) {
+            document.getElementById('selectedItems').style.display = 'none';
+            document.getElementById('bucket_name').style.display = 'none';
+            document.getElementById('transfer_button').style.display = 'none';
+            document.getElementById('file_transfer_status').style.display = 'none';
+
+            document.getElementById('create_bucket').style.display = 'block';
+            document.getElementById('new_bucket_name').style.display = 'block';
+            document.getElementById('bucket_create_status').style.display = 'block';
+            document.getElementById('bucket_create_status').innerHTML = '';
+
+            document.getElementById('new_bucket_name').value = '';
+
         }
         /**
          * Append a pre element to the body containing the given message
@@ -359,6 +394,24 @@
                 };
                 xhrcall(index, fileIdArray, accessToken);
             }
+        }
+
+        function createBucket(event) {
+            var xhr = new XMLHttpRequest();
+            var bucketName = document.getElementById('new_bucket_name').value;
+            var url = 'http://localhost:3000/createFolder/' + bucketName;
+            xhr.open('POST', url, true);
+
+            //Send the proper header information along with the request
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {//Call a function when the state changes.
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log('bucket created: ', xhr.responseText);
+                    document.getElementById('bucket_create_status').innerHTML = 'New Bucket Created';
+                }
+            }
+            xhr.send();
         }
 
         function base64ArrayBuffer(arrayBuffer) {
