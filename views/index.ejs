@@ -103,14 +103,15 @@
     </div>
     <div style="margin: 15px">
         <div class="d-flex">
-            <h3 class="mr-auto">Buckets</h3>
+            <h3 class="mr-auto" id="buckets_header" style="display: none;">Buckets</h3>
             <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new
                 bucket</button>
         </div>
         <p style="font-size: 20px;" id="sign_in_note">To Transfer your data to Filecoin Network, you
             need to first connect to your google account</p>
 
-        <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
+        <button id="authorize_button" style="display: none; background: none; border: none;"><img
+                src="images/btn_google_signin_dark_normal_web.png"></button>
 
         <div id="bucketsDiv"></div>
 
@@ -271,6 +272,7 @@
                 signInNote.style.display = 'none';
 
                 signoutButton.style.display = 'block';
+                document.getElementById('buckets_header').style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
                 createBucketActionButton.style.display = 'block';
                 document.getElementById('bucketsDiv').style.display = 'block';
@@ -311,7 +313,7 @@
             document.getElementById('fileTransferDiv').style.display = 'none';
             document.getElementById('bucketsDiv').innerHTML = '';
             document.getElementById('bucketsDiv').style.display = 'none';
-
+            document.getElementById('buckets_header').style.display = 'none';
             gapi.auth2.getAuthInstance().signOut();
         }
 
