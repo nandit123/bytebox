@@ -103,7 +103,7 @@
     </div>
     <div style="margin: 15px">
         <div class="d-flex">
-            <p class="mr-auto" style="font-weight: bold;">Automate Transfer</p>
+            <h3 class="mr-auto">Buckets</h3>
             <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new
                 bucket</button>
         </div>
@@ -411,6 +411,11 @@
                             if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
                                 console.log('image transfer status: ', xhr2[index].responseText);
                                 document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
+                                setTimeout(timeoutFunc, 1000);
+                                function timeoutFunc() {
+                                    document.getElementById('file_transfer_status').innerHTML = '';
+                                    clickBucket('refresh');
+                                }
                             }
                         }
                         xhr2[index].send(params);
@@ -434,6 +439,10 @@
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     console.log('bucket created: ', xhr.responseText);
                     document.getElementById('bucket_create_status').innerHTML = 'New Bucket Created';
+                    setTimeout(reloadPage, 1000);
+                    function reloadPage() {
+                        location.reload();
+                    }
                 }
             }
             xhr.send();
@@ -524,14 +533,17 @@
             xhr.send();
         }
 
-        function clickBucket() {
+        function clickBucket(action) {
             document.getElementById('createBucketDiv').style.display = 'none';
             document.getElementById('fileTransferDiv').style.display = 'none';
             if (currentBucket != '') {
                 document.getElementById(currentBucket).style.backgroundColor = "#ffcc99";
                 document.getElementById(currentBucket).style.color = "#000";
             }
-            currentBucket = this.innerHTML;
+            if (action != 'refresh') {
+                currentBucket = this.innerHTML;
+            } // else its the same bucket
+
             document.getElementById(currentBucket).style.backgroundColor = "#333";
             document.getElementById(currentBucket).style.color = "#fff";
             document.getElementById('listDirectoriesDiv').style.display = 'block';
