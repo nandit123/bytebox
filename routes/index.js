@@ -29,32 +29,31 @@ router.post('/transfer/:id/:bucketName', function (req, res) {
         console.log('local_temp created');
     }
     var destImage;
-    if (imageId.includes('.png') || imageId.includes('.jpeg') || imageId.includes('.jpg')) {
+    if (imageId.includes('.')) {
         destImage = __dirname + '\\local_temp\\' + imageId; // dropbox
     } else {
-        destImage = __dirname + '\\local_temp\\image_' + imageId + '.png'; // google drive
+        destImage = __dirname + '\\local_temp\\' + imageId + '.png'; // google drive
     }
     fs.writeFile(destImage, base64Image, { encoding: 'base64' }, function (err) {
         console.log('File created');
-    });
+        const stream = client.addItems({
+            bucket: req.params.bucketName,
+            targetPath: '/', // path in the bucket to be saved
+            sourcePaths: [destImage] // adding image one by one as this transfer route is called for every image
+        });
 
-    const stream = client.addItems({
-        bucket: req.params.bucketName,
-        targetPath: '/', // path in the bucket to be saved
-        sourcePaths: [destImage] // adding image one by one as this transfer route is called for every image
-    });
+        stream.on('data', (data) => {
+            console.log('data: ', data);
+        });
 
-    stream.on('data', (data) => {
-        console.log('data: ', data);
-    });
+        stream.on('error', (error) => {
+            console.error('error: ', error);
+        });
 
-    stream.on('error', (error) => {
-        console.error('error: ', error);
-    });
-
-    stream.on('end', () => {
-        fs.unlinkSync(destImage);
-        console.log('end');
+        stream.on('end', () => {
+            fs.unlinkSync(destImage);
+            console.log('end');
+        });
     });
 
     res.send('sent');

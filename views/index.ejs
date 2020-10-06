@@ -218,15 +218,17 @@
         }
 
         let fileIdArray = [];
+        let fileNameArray = [];
         // A simple callback implementation.
         function pickerCallback(data) {
             if (data.action == google.picker.Action.PICKED) {
                 var fileId;
                 for (var i = 0; i < data.docs.length; i++) {
                     fileId = fileIdArray.push(data.docs[i].id);
+                    fileId = fileNameArray.push(data.docs[i].name);
                 }
                 document.getElementById('selectedItems').style.display = 'block';
-                document.getElementById('selectedItems').innerHTML = '<b>Files selected => </b>' + fileIdArray;
+                document.getElementById('selectedItems').innerHTML = '<b>Files selected => </b>' + fileNameArray;
                 transferButton.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
             }
@@ -272,11 +274,6 @@
                                 if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
                                     console.log('image transfer status: ', xhr2[index].responseText);
                                     document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
-                                    setTimeout(timeoutFunc, 1000);
-                                    function timeoutFunc() {
-                                        document.getElementById('file_transfer_status').innerHTML = '';
-                                        clickBucket('refresh');
-                                    }
                                 }
                             }
                             xhr2[index].send(params);
@@ -284,6 +281,8 @@
                         xhr[index].send();
                     };
                     xhrcall(index, files);
+                    document.getElementById('file_transfer_status').innerHTML = '';
+                    clickBucket('refresh');
                 }
             },
 
@@ -375,6 +374,7 @@
             document.getElementById('selectedItems').innerHTML = '';
             document.getElementById('listDirectoriesDiv').innerHTML = '';
             fileIdArray = [];
+            fileNameArray = [];
             document.getElementById('createBucketDiv').style.display = 'none';
             document.getElementById('fileTransferDiv').style.display = 'none';
             document.getElementById('bucketsDiv').innerHTML = '';
@@ -392,6 +392,7 @@
             document.getElementById('file_transfer_status').innerHTML = '';
             document.getElementById('fileTransferDiv').style.display = 'block';
             fileIdArray = [];
+            fileNameArray = [];
             loadPicker();
         }
 
@@ -430,6 +431,7 @@
             for (var index = 0; index < fileIdArray.length; index++) {
                 function xhrcall(index, fileIdArray, accessToken) {
                     var fileId = fileIdArray[index];
+                    var fileName = fileNameArray[index];
                     xhr[index] = new XMLHttpRequest();
                     xhr[index].open("GET", "https://www.googleapis.com/drive/v3/files/" + fileId + '?alt=media', true);
                     xhr[index].setRequestHeader('Authorization', 'Bearer ' + accessToken);
@@ -439,7 +441,7 @@
                         var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr[index].response);
 
                         xhr2[index] = new XMLHttpRequest();
-                        var url = 'http://localhost:3000/transfer/' + fileId + '/' + bucketName;
+                        var url = 'http://localhost:3000/transfer/' + fileName + '/' + bucketName;
                         var params = 'base64=' + encodeURI(base64);
                         xhr2[index].open('POST', url, true);
 
@@ -450,11 +452,7 @@
                             if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
                                 console.log('image transfer status: ', xhr2[index].responseText);
                                 document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
-                                setTimeout(timeoutFunc, 1000);
-                                function timeoutFunc() {
-                                    document.getElementById('file_transfer_status').innerHTML = '';
-                                    clickBucket('refresh');
-                                }
+
                             }
                         }
                         xhr2[index].send(params);
@@ -462,6 +460,8 @@
                     xhr[index].send();
                 };
                 xhrcall(index, fileIdArray, accessToken);
+                document.getElementById('file_transfer_status').innerHTML = '';
+                clickBucket('refresh');
             }
         }
 
@@ -582,7 +582,7 @@
             if (action != 'refresh') {
                 currentBucket = this.innerHTML;
             } // else its the same bucket
-
+            // console.log('refresh')
             document.getElementById(currentBucket).style.backgroundColor = "#333";
             document.getElementById(currentBucket).style.color = "#fff";
             document.getElementById('listDirectoriesDiv').style.display = 'block';
