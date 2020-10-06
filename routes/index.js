@@ -28,8 +28,12 @@ router.post('/transfer/:id/:bucketName', function (req, res) {
         fs.mkdirSync(dir);
         console.log('local_temp created');
     }
-    var destImage = __dirname + '\\local_temp\\image_' + imageId + '.png';
-
+    var destImage;
+    if (imageId.includes('.png') || imageId.includes('.jpeg') || imageId.includes('.jpg')) {
+        destImage = __dirname + '\\local_temp\\' + imageId; // dropbox
+    } else {
+        destImage = __dirname + '\\local_temp\\image_' + imageId + '.png'; // google drive
+    }
     fs.writeFile(destImage, base64Image, { encoding: 'base64' }, function (err) {
         console.log('File created');
     });
