@@ -107,7 +107,7 @@
             <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new
                 bucket</button>
         </div>
-        <p style="margin-top: 100px; font-size: 20px;" id="sign_in_note">To Transfer your data to Filecoin Network, you
+        <p style="font-size: 20px;" id="sign_in_note">To Transfer your data to Filecoin Network, you
             need to first connect to your google account</p>
 
         <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
@@ -285,6 +285,7 @@
                 // bucketNameInput.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
                 createBucketActionButton.style.display = 'block';
+                document.getElementById('bucketsDiv').style.display = 'block';
                 listFiles();
                 showBuckets();
             } else {
@@ -320,6 +321,9 @@
             document.getElementById('selectedItems').innerHTML = '';
             fileIdArray = [];
             document.getElementById('createBucketDiv').style.display = 'none';
+            document.getElementById('bucketsDiv').innerHTML = '';
+            document.getElementById('bucketsDiv').style.display = 'none';
+
             gapi.auth2.getAuthInstance().signOut();
         }
 
