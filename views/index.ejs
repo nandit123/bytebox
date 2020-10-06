@@ -94,29 +94,33 @@
                     </ul>
                 </li>
             </ul>
-            <form class="form-inline mt-2 mt-md-0">
+            <form class="form-inline mt-2 mt-md-0" style="margin-right: 20px;">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
+            <button id="signout_button" style="display: none;" class="btn btn-danger">Sign Out</button>
         </div>
     </div>
     <div style="margin: 15px">
-        <p style="font-size: 30px;">Transfer | <a href="">Automate</a></p>
+        <div class="d-flex">
+            <p class="mr-auto" style="font-weight: bold;">Automate Transfer</p>
+            <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new
+                bucket</button>
+        </div>
         <p style="margin-top: 100px; font-size: 20px;" id="sign_in_note">To Transfer your data to Filecoin Network, you
             need to first connect to your google account</p>
 
         <button id="authorize_button" style="display: none;"><img src="images/sign-in-with-google.jpeg"></button>
-        <button id="signout_button" style="display: none; margin-bottom: 20px;" class="btn btn-danger">Sign Out</button>
 
-        <button id="picker_button" style="display: none; margin-bottom: 5px;" class="btn btn-primary">Transfer files
+        <div id="bucketsDiv"></div>
+
+        <button id="picker_button" style="display: none;" class="btn btn-primary">Transfer files
             from
             Google Drive</button>
-        <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new bucket</button>
         <br>
-        <div id="bucketsDiv"></div>
         <div id="listDirectoriesDiv"></div>
 
-        <div style="margin-left: 200px;">
+        <div style="margin-left: 200px;" id="functions_call_div">
             <pre id="content" style="white-space: pre-wrap;"></pre>
             <!-- <div id="result"></div> -->
 
@@ -133,14 +137,16 @@
             </strong>
 
             <!-- create a new bucket button -->
-            <div style="width: 300px; margin-bottom: 10px;">
-                <input type="text" id="new_bucket_name" placeholder="New Bucket Name" style="display: none;">
-            </div>
-            <button id="create_bucket" style="display: none;" class="btn btn-success">Create Bucket</button>
+            <div id="createBucketDiv">
+                <div style="width: 300px; margin-bottom: 10px;">
+                    <input type="text" id="new_bucket_name" placeholder="New Bucket Name" style="display: none;">
+                </div>
+                <button id="create_bucket" style="display: none;" class="btn btn-success">Create Bucket</button>
 
-            <strong>
-                <div id="bucket_create_status" style="display: none;"></div>
-            </strong>
+                <strong>
+                    <div id="bucket_create_status" style="display: none;"></div>
+                </strong>
+            </div>
         </div>
     </div>
 
@@ -274,7 +280,7 @@
                 signInNote.style.display = 'none';
 
                 signoutButton.style.display = 'block';
-                pickerButton.style.display = 'block';
+                pickerButton.style.display = 'inline-block';
                 // transferButton.style.display = 'block';
                 // bucketNameInput.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
@@ -313,6 +319,7 @@
             deletePreContent();
             document.getElementById('selectedItems').innerHTML = '';
             fileIdArray = [];
+            document.getElementById('createBucketDiv').style.display = 'none';
             gapi.auth2.getAuthInstance().signOut();
         }
 
@@ -333,7 +340,14 @@
             document.getElementById('bucket_name').style.display = 'none';
             document.getElementById('transfer_button').style.display = 'none';
             document.getElementById('file_transfer_status').style.display = 'none';
+            document.getElementById('listDirectoriesDiv').innerHTML = '';
+            if (currentBucket != '') {
+                document.getElementById(currentBucket).style.backgroundColor = "#ffcc99";
+                document.getElementById(currentBucket).style.color = "#000";
+            }
+            currentBucket = '';
 
+            document.getElementById('createBucketDiv').style.display = 'block';
             document.getElementById('create_bucket').style.display = 'block';
             document.getElementById('new_bucket_name').style.display = 'block';
             document.getElementById('bucket_create_status').style.display = 'block';
@@ -487,8 +501,9 @@
                     for (var i = 0; i < responseText.length; i++) {
                         var div = document.createElement("div");
                         div.style.display = "inline-block";
-                        div.style.backgroundColor = "#ccc";
-                        div.style.border = "1px black solid";
+                        div.style.backgroundColor = "#ffcc99";
+                        div.style.border = "1px black solid round";
+                        div.style.borderRadius = "20px";
                         div.style.padding = "30px"
                         div.style.margin = "5px"
                         div.innerHTML = responseText[i];
@@ -504,8 +519,9 @@
         }
 
         function clickBucket() {
+            document.getElementById('createBucketDiv').style.display = 'none';
             if (currentBucket != '') {
-                document.getElementById(currentBucket).style.backgroundColor = "#ccc";
+                document.getElementById(currentBucket).style.backgroundColor = "#ffcc99";
                 document.getElementById(currentBucket).style.color = "#000";
             }
             currentBucket = this.innerHTML;
