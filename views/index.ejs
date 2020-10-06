@@ -114,27 +114,22 @@
 
         <div id="bucketsDiv"></div>
 
-        <button id="picker_button" style="display: none;" class="btn btn-primary">Transfer files
-            from
-            Google Drive</button>
+        <button id="picker_button" style="display: none; margin-top: 10px;" class="btn btn-primary">Transfer files from
+            Google Drive to
+            this Bucket</button>
         <br>
-        <div id="listDirectoriesDiv"></div>
+        <div id="listDirectoriesDiv" style="margin-top: 50px;"></div>
 
         <div style="margin-left: 200px;" id="functions_call_div">
-            <pre id="content" style="white-space: pre-wrap;"></pre>
-            <!-- <div id="result"></div> -->
 
             <!-- pick files from google drive button -->
-            <div id="selectedItems"></div>
-            <br>
-            <div style="width: 300px; margin-bottom: 10px;">
-                <input type="text" id="bucket_name" placeholder="Bucket Name" style="display: none;">
+            <div id="fileTransferDiv">
+                <div id="selectedItems" style="margin-top: 50px; margin-bottom: 10px;"></div>
+                <button id="transfer_button" style="display: none;" class="btn btn-success">Transfer Files</button>
+                <strong>
+                    <div id="file_transfer_status" style="display: none;"></div>
+                </strong>
             </div>
-            <button id="transfer_button" style="display: none;" class="btn btn-success">Transfer Files</button>
-
-            <strong>
-                <div id="file_transfer_status" style="display: none;"></div>
-            </strong>
 
             <!-- create a new bucket button -->
             <div id="createBucketDiv">
@@ -178,7 +173,7 @@
         var transferButton = document.getElementById('transfer_button');
         var createBucketButton = document.getElementById('create_bucket')
         var signInNote = document.getElementById('sign_in_note');
-        var bucketNameInput = document.getElementById('bucket_name');
+        // var bucketNameInput = document.getElementById('bucket_name');
         var fileTransferStatusDiv = document.getElementById('file_transfer_status');
 
         var currentBucket = '';
@@ -227,7 +222,7 @@
                 // var fileId = data.docs[0].id;
                 document.getElementById('selectedItems').style.display = 'block';
                 document.getElementById('selectedItems').innerHTML = '<b>Files selected => </b>' + fileIdArray;
-                bucketNameInput.style.display = 'block';
+                // bucketNameInput.style.display = 'block';
                 transferButton.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
                 // alert('The user selected: ' + fileIdArray);
@@ -263,7 +258,7 @@
                 createBucketActionButton.onclick = handleCreateBucketUI;
                 transferButton.onclick = transferFilesToSpaceDaemon;
                 createBucketButton.onclick = createBucket;
-                bucketNameInput.value = '';
+                // bucketNameInput.value = '';
                 oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
             }, function (error) {
                 appendPre(JSON.stringify(error, null, 2));
@@ -280,7 +275,7 @@
                 signInNote.style.display = 'none';
 
                 signoutButton.style.display = 'block';
-                pickerButton.style.display = 'inline-block';
+                // pickerButton.style.display = 'inline-block';
                 // transferButton.style.display = 'block';
                 // bucketNameInput.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
@@ -295,7 +290,7 @@
                 signoutButton.style.display = 'none';
                 pickerButton.style.display = 'none';
                 transferButton.style.display = 'none';
-                bucketNameInput.style.display = 'none';
+                // bucketNameInput.style.display = 'none';
                 fileTransferStatusDiv.style.display = 'none';
 
                 createBucketActionButton.style.display = 'none';
@@ -317,10 +312,12 @@
          *  Sign out the user upon button click.
          */
         function handleSignoutClick(event) {
-            deletePreContent();
+            // deletePreContent();
             document.getElementById('selectedItems').innerHTML = '';
+            document.getElementById('listDirectoriesDiv').innerHTML = '';
             fileIdArray = [];
             document.getElementById('createBucketDiv').style.display = 'none';
+            document.getElementById('fileTransferDiv').style.display = 'none';
             document.getElementById('bucketsDiv').innerHTML = '';
             document.getElementById('bucketsDiv').style.display = 'none';
 
@@ -334,17 +331,21 @@
 
             document.getElementById('selectedItems').innerHTML = '';
             document.getElementById('file_transfer_status').innerHTML = '';
-
+            document.getElementById('fileTransferDiv').style.display = 'block';
             fileIdArray = [];
             loadPicker();
         }
 
         function handleCreateBucketUI(event) {
             document.getElementById('selectedItems').style.display = 'none';
-            document.getElementById('bucket_name').style.display = 'none';
+            // document.getElementById('bucket_name').style.display = 'none';
             document.getElementById('transfer_button').style.display = 'none';
             document.getElementById('file_transfer_status').style.display = 'none';
             document.getElementById('listDirectoriesDiv').innerHTML = '';
+            document.getElementById('listDirectoriesDiv').style.display = 'none';
+            document.getElementById('fileTransferDiv').style.display = 'block';
+            pickerButton.style.display = 'none';
+
             if (currentBucket != '') {
                 document.getElementById(currentBucket).style.backgroundColor = "#ffcc99";
                 document.getElementById(currentBucket).style.color = "#000";
@@ -381,7 +382,8 @@
         async function transferFilesToSpaceDaemon(event) {
             // fileIdArray;
             console.log('enteredFilesTo space daemon function')
-            var bucketName = document.getElementById("bucket_name").value;
+            // var bucketName = document.getElementById("bucket_name").value;
+            var bucketName = currentBucket;
             console.log('bucketname entered is: ', bucketName);
             var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
             var xhr = [];
@@ -524,6 +526,7 @@
 
         function clickBucket() {
             document.getElementById('createBucketDiv').style.display = 'none';
+            document.getElementById('fileTransferDiv').style.display = 'none';
             if (currentBucket != '') {
                 document.getElementById(currentBucket).style.backgroundColor = "#ffcc99";
                 document.getElementById(currentBucket).style.color = "#000";
@@ -531,6 +534,9 @@
             currentBucket = this.innerHTML;
             document.getElementById(currentBucket).style.backgroundColor = "#333";
             document.getElementById(currentBucket).style.color = "#fff";
+            document.getElementById('listDirectoriesDiv').style.display = 'block';
+
+            pickerButton.style.display = 'inline-block';
 
             var xhr = new XMLHttpRequest();
             var url = 'http://localhost:3000/listBucketDirectories/' + currentBucket;
@@ -542,7 +548,7 @@
             xhr.onreadystatechange = function () {//Call a function when the state changes.
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var response = JSON.parse(xhr.responseText);
-                    document.getElementById('listDirectoriesDiv').innerHTML = '';
+                    document.getElementById('listDirectoriesDiv').innerHTML = '<h3>Bucket Content</h3>';
                     for (var i = 0; i < response.length; i++) {
                         document.getElementById('listDirectoriesDiv').innerHTML += response[i] + '<br>';
                     }
