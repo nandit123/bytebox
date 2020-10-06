@@ -9,6 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.js" defer></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.js" defer></script>
     <script src="dist/js/bootstrap-navbar-dropdowns.js" defer></script>
+    <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs"
+        data-app-key="zdthfymo3osc4gt"></script>
 </head>
 
 <body>
@@ -118,6 +120,9 @@
         <button id="picker_button" style="display: none; margin-top: 10px;" class="btn btn-primary">Transfer files from
             Google Drive to
             this Bucket</button>
+        <div id="dropboxDiv" style="display: inline-block;">
+
+        </div>
         <br>
         <div id="listDirectoriesDiv" style="margin-top: 50px;"></div>
 
@@ -234,6 +239,25 @@
             gapi.load('client:auth2', initClient);
         }
 
+        // options for dropbox chooser button
+        var options = {
+
+            // Required. Called when a user selects an item in the Chooser.
+            success: function (files) {
+                alert("Here's the file link: " + files[0].link)
+            },
+
+            cancel: function () {
+                console.log('exited:: cancel function here')
+            },
+
+            linkType: "direct", // or "preview"
+            multiselect: true, // or false
+            extensions: ['.png', '.jpg', '.jpeg'],
+            folderselect: false,
+            sizeLimit: 1024 * 1024 * 100, // or any positive number
+        };
+
         /**
          *  Initializes the API client library and sets up sign-in state
          *  listeners.
@@ -257,6 +281,8 @@
                 transferButton.onclick = transferFilesToSpaceDaemon;
                 createBucketButton.onclick = createBucket;
                 oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+                var button = Dropbox.createChooseButton(options);
+                document.getElementById("dropboxDiv").appendChild(button);
             }, function (error) {
                 console.log(JSON.stringify(error, null, 2));
             });
