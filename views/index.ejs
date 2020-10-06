@@ -219,13 +219,10 @@
                 for (var i = 0; i < data.docs.length; i++) {
                     fileId = fileIdArray.push(data.docs[i].id);
                 }
-                // var fileId = data.docs[0].id;
                 document.getElementById('selectedItems').style.display = 'block';
                 document.getElementById('selectedItems').innerHTML = '<b>Files selected => </b>' + fileIdArray;
-                // bucketNameInput.style.display = 'block';
                 transferButton.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
-                // alert('The user selected: ' + fileIdArray);
             }
         }
 
@@ -258,7 +255,6 @@
                 createBucketActionButton.onclick = handleCreateBucketUI;
                 transferButton.onclick = transferFilesToSpaceDaemon;
                 createBucketButton.onclick = createBucket;
-                // bucketNameInput.value = '';
                 oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
             }, function (error) {
                 appendPre(JSON.stringify(error, null, 2));
@@ -275,9 +271,6 @@
                 signInNote.style.display = 'none';
 
                 signoutButton.style.display = 'block';
-                // pickerButton.style.display = 'inline-block';
-                // transferButton.style.display = 'block';
-                // bucketNameInput.style.display = 'block';
                 fileTransferStatusDiv.style.display = 'block';
                 createBucketActionButton.style.display = 'block';
                 document.getElementById('bucketsDiv').style.display = 'block';
@@ -290,7 +283,6 @@
                 signoutButton.style.display = 'none';
                 pickerButton.style.display = 'none';
                 transferButton.style.display = 'none';
-                // bucketNameInput.style.display = 'none';
                 fileTransferStatusDiv.style.display = 'none';
 
                 createBucketActionButton.style.display = 'none';
@@ -312,7 +304,6 @@
          *  Sign out the user upon button click.
          */
         function handleSignoutClick(event) {
-            // deletePreContent();
             document.getElementById('selectedItems').innerHTML = '';
             document.getElementById('listDirectoriesDiv').innerHTML = '';
             fileIdArray = [];
@@ -338,7 +329,6 @@
 
         function handleCreateBucketUI(event) {
             document.getElementById('selectedItems').style.display = 'none';
-            // document.getElementById('bucket_name').style.display = 'none';
             document.getElementById('transfer_button').style.display = 'none';
             document.getElementById('file_transfer_status').style.display = 'none';
             document.getElementById('listDirectoriesDiv').innerHTML = '';
@@ -361,28 +351,9 @@
             document.getElementById('new_bucket_name').value = '';
 
         }
-        /**
-         * Append a pre element to the body containing the given message
-         * as its text node. Used to display the results of the API call.
-         *
-         * @param {string} message Text to be placed in pre element.
-         */
-        // uncomment the below function statements to display the list of the files
-        function appendPre(message) {
-            // var pre = document.getElementById('content');
-            // var textContent = document.createTextNode(message + '\n');
-            // pre.appendChild(textContent);
-        }
-
-        function deletePreContent() {
-            var pre = document.getElementById('content');
-            pre.innerHTML = '';
-        }
 
         async function transferFilesToSpaceDaemon(event) {
-            // fileIdArray;
             console.log('enteredFilesTo space daemon function')
-            // var bucketName = document.getElementById("bucket_name").value;
             var bucketName = currentBucket;
             console.log('bucketname entered is: ', bucketName);
             var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
