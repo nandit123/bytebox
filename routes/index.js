@@ -118,7 +118,7 @@ router.get('/listBucketDirectories/:bucket', function (req, res) {
                 // console.log(entry.getIslocallyavailable());
                 // console.log(entry.getBackupcount());
                 // console.log(entry.getMembersList());
-                list.push('<b>File ID: </b>' + entry.getName() + ' | <b>ipfs hash: </b>' + entry.getIpfshash());
+                list.push('<b>File: </b>' + entry.getName() + ' | <b>ipfs hash: </b>' + entry.getIpfshash());
             });
             res.send(list);
         })

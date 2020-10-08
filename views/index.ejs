@@ -117,12 +117,8 @@
 
         <div id="bucketsDiv"></div>
 
-        <button id="picker_button" style="display: none; margin-top: 10px;" class="btn btn-primary">Transfer files from
-            Google Drive to
-            this Bucket</button>
-        <div id="dropboxDiv" style="display: inline-block;">
-
-        </div>
+        <button id="picker_button" style="display: none; margin-top: 10px;" class="btn btn-primary">Import from Google Drive</button>
+        <button id="dropbox_button" style="display: none; margin-top: 10px;" class="btn btn-info">Import from Drop Box</button>
         <br>
         <div id="listDirectoriesDiv" style="margin-top: 50px;"></div>
 
@@ -175,6 +171,7 @@
         var authorizeButton = document.getElementById('authorize_button');
         var signoutButton = document.getElementById('signout_button');
         var pickerButton = document.getElementById('picker_button');
+        var dropboxButton = document.getElementById('dropbox_button');
         var createBucketActionButton = document.getElementById('create_bucket_action');
         var transferButton = document.getElementById('transfer_button');
         var createBucketButton = document.getElementById('create_bucket')
@@ -323,12 +320,12 @@
                 authorizeButton.onclick = handleAuthClick;
                 signoutButton.onclick = handleSignoutClick;
                 pickerButton.onclick = handlePickerClick;
+                dropboxButton.onclick = handleChooserClick;
                 createBucketActionButton.onclick = handleCreateBucketUI;
                 transferButton.onclick = transferFilesToSpaceDaemon;
                 createBucketButton.onclick = createBucket;
                 oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
                 var button = Dropbox.createChooseButton(options);
-                document.getElementById("dropboxDiv").appendChild(button);
             }, function (error) {
                 console.log(JSON.stringify(error, null, 2));
             });
@@ -356,6 +353,7 @@
 
                 signoutButton.style.display = 'none';
                 pickerButton.style.display = 'none';
+                dropboxButton.style.display = 'none';
                 transferButton.style.display = 'none';
                 fileTransferStatusDiv.style.display = 'none';
 
@@ -403,6 +401,10 @@
             loadPicker();
         }
 
+        function handleChooserClick(event) {
+            Dropbox.choose(options);
+        }
+
         function handleCreateBucketUI(event) {
             document.getElementById('selectedItems').style.display = 'none';
             document.getElementById('transfer_button').style.display = 'none';
@@ -411,6 +413,7 @@
             document.getElementById('listDirectoriesDiv').style.display = 'none';
             document.getElementById('fileTransferDiv').style.display = 'block';
             pickerButton.style.display = 'none';
+            dropboxButton.style.display = 'none';
 
             if (currentBucket != '') {
                 document.getElementById(currentBucket).style.backgroundColor = "#ffcc99";
@@ -604,6 +607,7 @@
             document.getElementById('listDirectoriesDiv').style.display = 'block';
 
             pickerButton.style.display = 'inline-block';
+            dropboxButton.style.display = 'inline-block';
 
             var xhr = new XMLHttpRequest();
             var url = 'http://localhost:3000/listBucketDirectories/' + currentBucket;
