@@ -105,11 +105,11 @@
     </div>
     <div style="margin: 15px">
         <div class="d-flex">
-            <h3 class="mr-auto" id="buckets_header" style="display: none;">Buckets</h3>
-            <button id="create_bucket_action" class="btn btn-primary" style="display: none;">Create a new
+            <h3 class="mr-auto" id="buckets_header" style="display: block;">Buckets</h3>
+            <button id="create_bucket_action" class="btn btn-primary" style="display: block;">Create a new
                 bucket</button>
         </div>
-        <p style="font-size: 20px;" id="sign_in_note">To Transfer your data to Filecoin Network, you
+        <p style="font-size: 20px;" id="sign_in_note" style="display: none;">To Transfer your data to Filecoin Network, you
             need to first connect to your google account</p>
 
         <button id="authorize_button" style="display: none; background: none; border: none;"><img
@@ -117,8 +117,10 @@
 
         <div id="bucketsDiv"></div>
 
-        <button id="picker_button" style="display: none; margin-top: 10px;" class="btn btn-primary">Import from Google Drive</button>
-        <button id="dropbox_button" style="display: none; margin-top: 10px;" class="btn btn-info">Import from Drop Box</button>
+        <button id="picker_button" style="display: none; margin-top: 10px;" class="btn btn-primary">Import from Google
+            Drive</button>
+        <button id="dropbox_button" style="display: none; margin-top: 10px;" class="btn btn-info">Import from Drop
+            Box</button>
         <br>
         <div id="listDirectoriesDiv" style="margin-top: 50px;"></div>
 
@@ -129,7 +131,7 @@
                 <div id="selectedItems" style="margin-top: 50px; margin-bottom: 10px;"></div>
                 <button id="transfer_button" style="display: none;" class="btn btn-success">Transfer Files</button>
                 <strong>
-                    <div id="file_transfer_status" style="display: none;"></div>
+                    <div id="file_transfer_status" style="display: block;"></div>
                 </strong>
             </div>
 
@@ -166,7 +168,8 @@
         var developerKey = 'AIzaSyDxe3SDEXfrG1Wm491vyCtcC3ed_cmHGWA'
         // Authorization scopes required by the API; multiple scopes can be
         // included, separated by spaces.
-        var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.metadata https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.photos.readonly https://www.googleapis.com/auth/drive.readonly';
+        // var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.metadata https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.photos.readonly https://www.googleapis.com/auth/drive.readonly';
+        var scope = ['https://www.googleapis.com/auth/drive.file'];
 
         var authorizeButton = document.getElementById('authorize_button');
         var signoutButton = document.getElementById('signout_button');
@@ -179,10 +182,30 @@
         // var bucketNameInput = document.getElementById('bucket_name');
         var fileTransferStatusDiv = document.getElementById('file_transfer_status');
 
+        // authorizeButton.onclick = handleAuthClick;
+        // signoutButton.onclick = handleSignoutClick;
+        pickerButton.onclick = handlePickerClick;
+        dropboxButton.onclick = handleChooserClick;
+        createBucketActionButton.onclick = handleCreateBucketUI;
+        transferButton.onclick = transferFilesToSpaceDaemon;
+        createBucketButton.onclick = createBucket;
+        // oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+        var button = Dropbox.createChooseButton(options);
+        showBuckets();
         var currentBucket = '';
         function loadPicker() {
-            // gapi.load('auth', { 'callback': onAuthApiLoad });
+            gapi.load('auth', { 'callback': onAuthApiLoad });
             gapi.load('picker', { 'callback': onPickerApiLoad });
+        }
+
+        function onAuthApiLoad() {
+            window.gapi.auth.authorize(
+                {
+                    'client_id': CLIENT_ID,
+                    'scope': scope,
+                    'immediate': false
+                },
+                handleAuthResult);
         }
 
         function onPickerApiLoad() {
@@ -190,12 +213,19 @@
             createPicker();
         }
 
+        function handleAuthResult(authResult) {
+            if (authResult && !authResult.error) {
+                oauthToken = authResult.access_token;
+                createPicker();
+            }
+        }
+
         // Create and render a Picker object for searching images.
         function createPicker() {
             // when first time login, the oauthToken is generally undefined, hence added this code
-            if (!oauthToken) {
-                oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
-            }
+            // if (!oauthToken) {
+            //     oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
+            // }
 
             if (pickerApiLoaded && oauthToken) {
                 var view = new google.picker.View(google.picker.ViewId.DOCS);
@@ -345,7 +375,7 @@
                 fileTransferStatusDiv.style.display = 'block';
                 createBucketActionButton.style.display = 'block';
                 document.getElementById('bucketsDiv').style.display = 'block';
-                listFiles();
+                // listFiles();
                 showBuckets();
             } else {
                 authorizeButton.style.display = 'block';
@@ -435,7 +465,7 @@
             console.log('enteredFilesTo space daemon function')
             var bucketName = currentBucket;
             console.log('bucketname entered is: ', bucketName);
-            var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
+            var accessToken = oauthToken;// or this: gapi.auth.getToken().access_token;
             var xhr = [];
             var xhr2 = [];
             (function loop(index, length) {
@@ -682,8 +712,9 @@
         }
     </script>
 
-    <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
-        onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
+    <!-- <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()"></script> -->
+    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
 
 </body>
 
