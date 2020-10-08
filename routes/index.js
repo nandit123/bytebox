@@ -16,12 +16,12 @@ router.get('/', function (req, res) {
     res.render('index', { name: "Byte me" });
 });
 
+// var streamObj = {};
 router.post('/transfer/:id/:bucketName', function (req, res) {
-    console.log('entered transfer function');
     var imageId = req.params.id;
+    console.log('entered transfer function: ', imageId);
     let base64String = decodeURI(req.body.base64).replace(/\s/g, '+');
     let base64Image = base64String.split(';base64,').pop();
-
     var dir = './routes/local_temp';
 
     if (!fs.existsSync(dir)) {
@@ -35,7 +35,7 @@ router.post('/transfer/:id/:bucketName', function (req, res) {
         destImage = __dirname + '\\local_temp\\' + imageId + '.png'; // google drive
     }
     fs.writeFile(destImage, base64Image, { encoding: 'base64' }, function (err) {
-        console.log('File created');
+        // streamObj[imageId] = client.addItems({
         const stream = client.addItems({
             bucket: req.params.bucketName,
             targetPath: '/', // path in the bucket to be saved
@@ -43,7 +43,7 @@ router.post('/transfer/:id/:bucketName', function (req, res) {
         });
 
         stream.on('data', (data) => {
-            console.log('data: ', data);
+            console.log('data: ', imageId);
         });
 
         stream.on('error', (error) => {
@@ -52,11 +52,10 @@ router.post('/transfer/:id/:bucketName', function (req, res) {
 
         stream.on('end', () => {
             fs.unlinkSync(destImage);
-            console.log('end');
+            console.log('end:', imageId);
+            res.send('sent');
         });
     });
-
-    res.send('sent');
 });
 
 router.post('/createFolder/:name', function (req, res) {
@@ -108,17 +107,17 @@ router.get('/listBucketDirectories/:bucket', function (req, res) {
             const entries = result.getEntriesList();
 
             entries.forEach((entry) => {
-                console.log(entry.getPath());
+                // console.log(entry.getPath());
                 console.log(entry.getName());
-                console.log(entry.getIsdir());
-                console.log(entry.getCreated());
-                console.log(entry.getUpdated());
-                console.log(entry.getIpfshash());
-                console.log(entry.getSizeinbytes());
-                console.log(entry.getFileextension());
-                console.log(entry.getIslocallyavailable());
-                console.log(entry.getBackupcount());
-                console.log(entry.getMembersList());
+                // console.log(entry.getIsdir());
+                // console.log(entry.getCreated());
+                // console.log(entry.getUpdated());
+                // console.log(entry.getIpfshash());
+                // console.log(entry.getSizeinbytes());
+                // console.log(entry.getFileextension());
+                // console.log(entry.getIslocallyavailable());
+                // console.log(entry.getBackupcount());
+                // console.log(entry.getMembersList());
                 list.push('<b>File ID: </b>' + entry.getName() + ' | <b>ipfs hash: </b>' + entry.getIpfshash());
             });
             res.send(list);

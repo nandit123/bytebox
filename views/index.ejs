@@ -246,13 +246,15 @@
 
             // Required. Called when a user selects an item in the Chooser.
             success: function (files) {
-                // alert("Here's the file link: " + files[0].link)
                 var bucketName = currentBucket;
-                console.log('bucketname entered is: ', bucketName);
-                var xhr = [];
-                var xhr2 = [];
-                for (var index = 0; index < files.length; index++) {
-                    function xhrcall(index, files) {
+                var f = (function () {
+                    var xhr = [];
+                    var index = 0;
+                    var xhr2 = [];
+                    (function loop(index, length) {
+                        if (index >= length) {
+                            return;
+                        }
                         var fileId = files[index].link.split('/');
                         fileId = fileId[fileId.length - 1]; // fetched the name off the link
                         xhr[index] = new XMLHttpRequest();
@@ -261,29 +263,27 @@
                         xhr[index].onload = function () {
                             //base64ArrayBuffer from https://gist.github.com/jonleighton/958841
                             var base64 = 'data:image/png;base64,' + base64ArrayBuffer(xhr[index].response);
-
                             xhr2[index] = new XMLHttpRequest();
                             var url = 'http://localhost:3000/transfer/' + fileId + '/' + bucketName;
                             var params = 'base64=' + encodeURI(base64);
                             xhr2[index].open('POST', url, true);
-
                             //Send the proper header information along with the request
                             xhr2[index].setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
                             xhr2[index].onreadystatechange = function () {//Call a function when the state changes.
                                 if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
-                                    console.log('image transfer status: ', xhr2[index].responseText);
+                                    console.log('image transfer status: ', xhr2[index].responseText, ' : index : ', index);
+                                    loop(index + 1, length);
                                     document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
                                 }
-                            }
+                            };
                             xhr2[index].send(params);
                         }
+
                         xhr[index].send();
-                    };
-                    xhrcall(index, files);
-                    document.getElementById('file_transfer_status').innerHTML = '';
-                    clickBucket('refresh');
-                }
+                        // document.getElementById('file_transfer_status').innerHTML = '';
+                        // clickBucket('refresh');
+                    }) (0, files.length);
+                })();
             },
 
             cancel: function () {
@@ -452,7 +452,11 @@
                             if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
                                 console.log('image transfer status: ', xhr2[index].responseText);
                                 document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
-
+                                setTimeout(timeoutFunc, 1000);
+                                function timeoutFunc() {
+                                    document.getElementById('file_transfer_status').innerHTML = '';
+                                    clickBucket('refresh');
+                                }
                             }
                         }
                         xhr2[index].send(params);
@@ -460,8 +464,6 @@
                     xhr[index].send();
                 };
                 xhrcall(index, fileIdArray, accessToken);
-                document.getElementById('file_transfer_status').innerHTML = '';
-                clickBucket('refresh');
             }
         }
 
