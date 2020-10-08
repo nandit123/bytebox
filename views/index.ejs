@@ -273,7 +273,14 @@
                                 if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
                                     console.log('image transfer status: ', xhr2[index].responseText, ' : index : ', index);
                                     loop(index + 1, length);
-                                    document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
+                                    if (index == length - 1) {
+                                        document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
+                                        setTimeout(timeoutFunc, 1000);
+                                        function timeoutFunc() {
+                                            document.getElementById('file_transfer_status').innerHTML = '';
+                                            clickBucket('refresh');
+                                        }
+                                    }
                                 }
                             };
                             xhr2[index].send(params);
@@ -282,7 +289,7 @@
                         xhr[index].send();
                         // document.getElementById('file_transfer_status').innerHTML = '';
                         // clickBucket('refresh');
-                    }) (0, files.length);
+                    })(0, files.length);
                 })();
             },
 
@@ -428,7 +435,11 @@
             var accessToken = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;// or this: gapi.auth.getToken().access_token;
             var xhr = [];
             var xhr2 = [];
-            for (var index = 0; index < fileIdArray.length; index++) {
+            (function loop(index, length) {
+                if (index >= length) {
+                    return;
+                }
+                // for (var index = 0; index < fileIdArray.length; index++) {
                 function xhrcall(index, fileIdArray, accessToken) {
                     var fileId = fileIdArray[index];
                     var fileName = fileNameArray[index];
@@ -451,11 +462,14 @@
                         xhr2[index].onreadystatechange = function () {//Call a function when the state changes.
                             if (xhr2[index].readyState == 4 && xhr2[index].status == 200) {
                                 console.log('image transfer status: ', xhr2[index].responseText);
-                                document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
-                                setTimeout(timeoutFunc, 1000);
-                                function timeoutFunc() {
-                                    document.getElementById('file_transfer_status').innerHTML = '';
-                                    clickBucket('refresh');
+                                loop(index + 1, length);
+                                if (index == length - 1) {
+                                    document.getElementById('file_transfer_status').innerHTML = 'Files Transferred to Space Daemon';
+                                    setTimeout(timeoutFunc, 1000);
+                                    function timeoutFunc() {
+                                        document.getElementById('file_transfer_status').innerHTML = '';
+                                        clickBucket('refresh');
+                                    }
                                 }
                             }
                         }
@@ -464,7 +478,7 @@
                     xhr[index].send();
                 };
                 xhrcall(index, fileIdArray, accessToken);
-            }
+            })(0, fileIdArray.length);
         }
 
         function createBucket(event) {
