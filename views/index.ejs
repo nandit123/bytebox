@@ -120,7 +120,10 @@
             Drive</button>
         <button id="dropbox_button" style="display: none; margin-top: 10px;" class="btn btn-info">Import from Drop
             Box</button>
-        <br>
+        <button class="btn btn-default" disabled style="display: none; margin-top: 10px;" id="fileTransferLoader">
+            <span class="spinner-grow spinner-grow-sm"></span>
+            Transferring..
+        </button>
         <div id="listDirectoriesDiv" style="margin-top: 50px;"></div>
         <button class="btn btn-primary" disabled style="display: none;" id="listDirectoriesLoader">
             <span class="spinner-grow spinner-grow-sm"></span>
@@ -280,6 +283,7 @@
                     var xhr = [];
                     var index = 0;
                     var xhr2 = [];
+                    document.getElementById('fileTransferLoader').style.display = 'block';
                     (function loop(index, length) {
                         if (index >= length) {
                             return;
@@ -470,6 +474,7 @@
             var accessToken = oauthToken;// or this: gapi.auth.getToken().access_token;
             var xhr = [];
             var xhr2 = [];
+            document.getElementById('fileTransferLoader').style.display = 'block';
             (function loop(index, length) {
                 if (index >= length) {
                     return;
@@ -630,11 +635,13 @@
                 document.getElementById(currentBucket).style.backgroundColor = "#ffcc99";
                 document.getElementById(currentBucket).style.color = "#000";
             }
+            document.getElementById('fileTransferLoader').style.display = 'none';
             if (action != 'refresh') {
                 currentBucket = this.innerHTML;
                 document.getElementById('listDirectoriesDiv').innerHTML = '<h3>Bucket Content</h3>';
-                document.getElementById('listDirectoriesLoader').style.display = 'block';
-            } // else its the same bucket
+            } // else its the same bucket 
+            document.getElementById('listDirectoriesLoader').style.display = 'block';
+
             // console.log('refresh')
             document.getElementById(currentBucket).style.backgroundColor = "#333";
             document.getElementById(currentBucket).style.color = "#fff";
@@ -658,6 +665,9 @@
                         document.getElementById('listDirectoriesDiv').innerHTML += response[i] + '<br>';
                     }
                     document.getElementById('listDirectoriesLoader').style.display = 'none';
+                    if (response.length == 0) {
+                        document.getElementById('listDirectoriesDiv').innerHTML += 'Empty';
+                    }
                 }
             }
             xhr.send();
