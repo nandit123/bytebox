@@ -122,7 +122,10 @@
             Box</button>
         <br>
         <div id="listDirectoriesDiv" style="margin-top: 50px;"></div>
-
+        <button class="btn btn-primary" disabled style="display: none;" id="listDirectoriesLoader">
+            <span class="spinner-grow spinner-grow-sm"></span>
+            Loading..
+        </button>
         <div style="margin-left: 200px;" id="functions_call_div">
 
             <!-- pick files from google drive button -->
@@ -629,6 +632,8 @@
             }
             if (action != 'refresh') {
                 currentBucket = this.innerHTML;
+                document.getElementById('listDirectoriesDiv').innerHTML = '<h3>Bucket Content</h3>';
+                document.getElementById('listDirectoriesLoader').style.display = 'block';
             } // else its the same bucket
             // console.log('refresh')
             document.getElementById(currentBucket).style.backgroundColor = "#333";
@@ -652,7 +657,7 @@
                     for (var i = 0; i < response.length; i++) {
                         document.getElementById('listDirectoriesDiv').innerHTML += response[i] + '<br>';
                     }
-
+                    document.getElementById('listDirectoriesLoader').style.display = 'none';
                 }
             }
             xhr.send();
