@@ -124,7 +124,12 @@
             <span class="spinner-grow spinner-grow-sm"></span>
             Transferring..
         </button>
+        <button class="btn btn-default" disabled style="display: none; margin-top: 20px;" id="openingFileLoader">
+            <span class="spinner-border spinner-border-sm"></span>
+            Opening File...
+        </button>
         <div id="listDirectoriesDiv" style="margin-top: 50px;"></div>
+        <!-- <img src="local_temp/imageOpened.png"> -->
         <button class="btn btn-primary" disabled style="display: none;" id="listDirectoriesLoader">
             <span class="spinner-grow spinner-grow-sm"></span>
             Loading..
@@ -628,6 +633,29 @@
             xhr.send();
         }
 
+        function openFile(bucket, i) {
+            console.log('bucket is : ', bucket.id);
+            console.log('index is: ', i);
+            document.getElementById('openingFileLoader').style.display = 'block';
+            var xhr = new XMLHttpRequest();
+            var url = 'http://localhost:3000/openFile/' + bucket.id + '/' + i;
+            xhr.open('GET', url, true);
+
+            //Send the proper header information along with the request
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {//Call a function when the state changes.
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // var response = JSON.parse(xhr.responseText);
+                    console.log(xhr.responseText);
+                    document.getElementById('openingFileLoader').style.display = 'none';
+                    window.open('local_temp/imageOpened.png', 'Image', 'width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
+                }
+            }
+            xhr.send();
+
+        }
+
         function clickBucket(action) {
             document.getElementById('createBucketDiv').style.display = 'none';
             document.getElementById('fileTransferDiv').style.display = 'none';
@@ -662,7 +690,7 @@
                     var response = JSON.parse(xhr.responseText);
                     document.getElementById('listDirectoriesDiv').innerHTML = '<h3>Bucket Content</h3>';
                     for (var i = 0; i < response.length; i++) {
-                        document.getElementById('listDirectoriesDiv').innerHTML += response[i] + '<br>';
+                        document.getElementById('listDirectoriesDiv').innerHTML += '<p>' + response[i] + ' <button style="display: inline-block; background: none; border: 1px solid" onclick="openFile(' + currentBucket + ',' + i + ')">open</button>' + '</p>';
                     }
                     document.getElementById('listDirectoriesLoader').style.display = 'none';
                     if (response.length == 0) {

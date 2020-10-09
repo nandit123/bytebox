@@ -128,4 +128,44 @@ router.get('/listBucketDirectories/:bucket', function (req, res) {
 
 })
 
+router.get('/openFile/:bucket/:index', function (req, res) {
+    var bucket = req.params.bucket;
+    var index = req.params.index;
+
+    console.log('bucket is: ', bucket, ' and index: ', index)
+    const asyncFunc = async () => {
+        try {
+            console.log('inside async bucket is: ', bucket, ' and index: ', index)
+            const dirRes = await client.listDirectories({
+                bucket,
+            });
+
+            const entriesList = dirRes.getEntriesList();
+
+            const openFileRes = await client.openFile({
+                bucket,
+                path: entriesList[index].getPath(),
+            });
+
+            const location = openFileRes.getLocation();
+            console.log('wowo')
+            fs.copyFile(location, __dirname + '\\local_temp\\' + 'imageOpened.png', (err) => {
+                if (err) {
+                    console.log("Error Found:", err);
+                }
+                else {
+                    console.log('copy done')
+                    var openedImage = __dirname + '\\local_temp\\' + 'imageOpened.png';
+                    console.log('opened image', openedImage)
+                }
+            });
+            res.send(location); // "/path/to/the/copied/file"
+        } catch (e) {
+            console.log('file open error')
+        }
+    };
+
+    asyncFunc();
+})
+
 module.exports = router;

@@ -4,6 +4,7 @@ const port = 3000
 const bodyParser = require("body-parser");
 
 app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/routes'));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 // app.engine('html', require('ejs').renderFile);
 // app.set('view engine', 'html');
